@@ -11,24 +11,19 @@ public:
   DecisionMakerBehaviour() = default;
 
   string                          BannerId;
+  string                          studentType;
+  boo                             on-Campus;  
 
   string                          Location;
-
-  string                          ReactionTime;
-
   string                          Size;
-
-  string                          PersonId;
-
-  string                          RelationshipType;
-
-  string                          PersonStatus;
-
+  string                          Group;
+  long                            PersonId;
+  bool                            isSick;
   string                          SafeDistanceProbability;
-
   string                          MaskProbability;
 
-  string                          Group;
+  vector<personId>                relationships; 
+  vector<string>                  relationshipType  
 
   
 
@@ -72,18 +67,6 @@ public:
 
         }
 
-      // block: ReactionTime
-
-        {           
-
-          TiXmlElement * pReactionTime = new TiXmlElement( "ReactionTime" );          
-
-          pReactionTime->LinkEndChild(new TiXmlText(reactionTime.c_str()));
-
-          root->LinkEndChild( pReactionTime );  
-
-        }
-
       
 
       // block: Size
@@ -110,30 +93,43 @@ public:
 
         }      
 
+         // block: Relationships
+        {    
+          vector<string>::iterator iter;
+          TiXmlElement * RelationshipsNode = new TiXmlElement("Relationships");
+          root ->LinkEndChild(RelationshipsNode);
+          for (iter=Relationships.begin(); iter != Relationships.end(); iter++)
+          {
+            const string& w=*iter;      
+            TiXmlElement * priorityD = new TiXmlElement( "Relationships" );
+            RelationshipsNode->LinkEndChild( Relationships );
+            Relationships->SetAttribute("Personid", w.c_str());          
+          }
+        }      
+
       // block: RelationshipType
 
         {    
-
-          TiXmlElement * pRelationshipType = new TiXmlElement( "RelationshipType" );          
-
-          pRelationshipType->LinkEndChild(new TiXmlText(RelationshipType.c_str()));
-
-          root->LinkEndChild( pPRelationshipType );   
-
-         
-
-        }    
-
-      // block: PersonStatus
+          vector<Relationship>::iterator iter;
+          TiXmlElement * RelationshipTypeNode = new TiXmlElement("RelationshipType");
+          root ->LinkEndChild(RelationshipTypeNode);
+          for (iter=RelationshipTypeNode.begin(); iter != RelationshipTypeNode.end(); iter++)
+          { 
+            const RelationshipType& w=*iter;
+            TiXmlElement * Relations = new TiXmlElement("Relations");
+            RelationshipTypeNode ->LinkEndChild(Relations);
+            Relations->SetAttribute("personid", w.personId.c_str()); 
+            
+          }
+        }      
+      // block: isSick
 
         {    
 
-          TiXmlElement * pPersonStatus = new TiXmlElement( "PersonStatus" );          
-
-          pPersonStatus->LinkEndChild(new TiXmlText(PersonStatus.c_str()));
-
-          root->LinkEndChild( pPersonStatus ); 
-
+          TiXmlElement * pisSick = new TiXmlElement( "isSick" );
+          if (!pisSick) return
+          const bool* pisSick = root->LinkEndChild( pisSick );             
+          if (isSick) isSick = pisSick;
         }      
 
       // block: SaveDistanceProbability
