@@ -53,7 +53,7 @@ template <typename TIME> class Room{
         // update viral load every 12 minutes
         // or when sick person enters room 
 
-        /*
+        
         int tempSickPeople = SickPeople;
         if (SickPeople >= tempSickPeople) {
             UpdateViralLoad();
@@ -66,7 +66,7 @@ template <typename TIME> class Room{
                 ChangeAir();
             }
         }
-        */
+        
         
     }
     void external_transition(TIME e, typename make_message_bags<input_ports>::type mbs){
@@ -115,10 +115,10 @@ template <typename TIME> class Room{
                 room_size = RoomSize;
                 room_ID = RoomID;
                 viral_load = ViralLoad;
-                get_messages<typename Reception_defs::cust>(bags).push_back(people_in_room);
-                get_messages<typename Reception_defs::cust>(bags).push_back(room_size);
-                get_messages<typename Reception_defs::cust>(bags).push_back(room_Id);
-                get_messages<typename Reception_defs::cust>(bags).push_back(viral_load);
+                get_messages<typename Room_Ports::Room_Specs>(bags).push_back(people_in_room);
+                get_messages<typename Room_Ports::Room_Specs>(bags).push_back(room_size);
+                get_messages<typename Room_Ports::Room_Specs>(bags).push_back(room_Id);
+                get_messages<typename Room_Ports::Room_Specs>(bags).push_back(viral_load);
             }   
         return bags;
 
