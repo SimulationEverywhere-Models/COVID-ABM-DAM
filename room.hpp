@@ -1,6 +1,6 @@
 
-//#include <cadmium/modeling/ports.hpp>
-//#include <cadmium/modeling/message_bag.hpp>
+#include <cadmium/modeling/ports.hpp>
+#include <cadmium/modeling/message_bag.hpp>
 
 #include <limits>
 #include <assert.h>
@@ -21,7 +21,7 @@ template <typename TIME> class Room{
     SPECS RoomID;
     TIME UpdateTime;
 
-    //Come back to this definition
+    
     Room () noexcept{
         UpdateTime = TIME("00:00:05:00");
         state.next_internal = std:numeric_limits<TIME>::infinity();
@@ -131,9 +131,5 @@ template <typename TIME> class Room{
 
     }
     
-    /*friend std::ostringstream& operator<<(std::ostringstream& os, const typename Room<TIME>::state_type& i){
-        os<<
-    }
-
-    */
+   
 }
