@@ -31,10 +31,6 @@ struct room_out{
 	int RoomID;
 };
 
-//state definition 
-struct room_state{
-	
-};
 
 template<typename TIME>
 
