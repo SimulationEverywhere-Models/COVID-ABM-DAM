@@ -8,7 +8,6 @@
 using namespace cadmium;
 using namespace std;
 
-
 //Port definition
 //definition of input/output events 
 struct Room_Specs_Filter_Ports{
@@ -30,7 +29,6 @@ struct room_out{
 	float viral_particles;
 	long RoomID;
 };
-
 
 template<typename TIME> class Room_Specs_Filter{
 	TIME UpdateTime;
@@ -100,6 +98,4 @@ typename make_message_bags<output_ports>::type output() const{
 
  return bags;
 }
-
-
 
