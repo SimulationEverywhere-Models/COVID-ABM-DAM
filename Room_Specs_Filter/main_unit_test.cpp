@@ -50,7 +50,7 @@ int main(){
     //Input Reader atomic model instantiation
     const char * i_input_data = "../room_input.txt";
     shared_ptr<dynamic::modeling::model> input_reader;
-    input_reader = dynamic::translate::make_dynamic_atomic_model<InputReader_room_in, TIME, const char*>("input_reader", move(i_input_data));
+    input_reader = dynamic::translate::make_dynamic_atomic_model<InputReader_room_specs_in, TIME, const char*>("input_reader", move(i_input_data));
 
 
     //RoomSpecsFilter atomic model instantiation
