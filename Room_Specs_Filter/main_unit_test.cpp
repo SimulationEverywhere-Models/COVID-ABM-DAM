@@ -30,7 +30,7 @@ using TIME = NDTime;
 struct inp_in : public cadmium::in_port<room_specs_in>{};
 
 //define output port for coupled model
-struct outp_in : public cadmium::in_port<room_specs_out>{};
+struct outp_out : public cadmium::in_port<room_specs_out>{};
 
 
 //Input Reader atomic model declaration
@@ -59,14 +59,14 @@ int main(){
 
     //TOP MODEL
     dynamic::modeling::Ports iports_TOP = {};
-    dynamic::modeling::Ports oports_TOP = {typeid(top_out)};
+    dynamic::modeling::Ports oports_TOP = {typeid(outp_out)};
     dynamic::modeling::Models submodels_TOP= {input_reader, RoomSpecsFilter1};
     dynamic::modeling::EICs eics_TOP = {};
     dynamic::modeling::EOCs eocs_TOP{
         dynamic::translate::make_EOC<Room_Specs_Filter_Ports::room_out,outp_out>("RoomSpecsFilter")
     };
     dynamic::modeling::ICs ics_TOP = {
-        dynamic::translate::make_IC<iestream_input_defs<room_in>::out,Room_Specs_Filter_Ports::room_in>("input_reader","RoomSpecsFilter")
+        dynamic::translate::make_IC<iestream_input_defs<room_specs_in>::out,Room_Specs_Filter_Ports::room_in>("input_reader","RoomSpecsFilter")
     };
     shared_ptr<dynamic::modeling::coupled<TIME>> TOP;
     TOP = make_shared<dynamic::modeling::coupled<TIME>>(
@@ -96,6 +96,6 @@ int main(){
 
     //Runner call
     dynamic::engine::runner<NDTime, logger_top> r(TOP, {0});
-    r.run_until_passivate());
+    r.run_until_passivate();
     return 0;
 }
