@@ -24,12 +24,12 @@ template<typename TIME> class Room_Specs_Filter{
 
 	long PERSON_ID;
 
-    using input_ports=std::tuple<typename Room_Specs_Filter_Ports::room_specs_in>;
-	using output_ports=std::tuple<typename Room_Specs_Filter_Ports::room_specs_out>;
+    using input_ports=std::tuple<typename Room_Specs_Filter_Ports::room_in>;
+	using output_ports=std::tuple<typename Room_Specs_Filter_Ports::room_out>;
 
 	//state definition 
 	struct state_type{
-		vector<room_in> msgs_passing_filter;
+		vector<room_specs_in> msgs_passing_filter;
 	}; state_type state; 
 
     //default constructor
@@ -67,7 +67,6 @@ template<typename TIME> class Room_Specs_Filter{
             //get_messages<typename Room_Specs_Filter_Ports::room_out>(bags).push_back(state.msgs_passing_filter[i].IsSick); 
   
         }
-
     return bags;
     }
 
