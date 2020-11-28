@@ -8,7 +8,7 @@
 using namespace std;
 
 struct room_specs_in{
-room_specs_in(){}     //default constructor of "garbage"
+room_specs_in(){}  
 room_specs_in(long i_person_id, int i_people_in_room, float i_room_size, float i_viral_particles, long i_room_ID)
     :Person_ID(i_person_id), people_in_room(i_people_in_room), room_size(i_room_size), viral_particles(i_viral_particles), room_ID(i_room_ID){}
 
