@@ -27,18 +27,18 @@ using namespace cadmium::basic_models::pdevs;
 using TIME = NDTime;
 
 //define input port for coupled model
-struct inp_in : public cadmium::in_port<room_specs_in>{};
+struct inp_in : public cadmium::in_port<room_specs>{};
 
 //define output port for coupled model
-struct outp_out : public cadmium::in_port<room_specs_out>{};
+struct outp_out : public cadmium::in_port<room_specs>{};
 
 
 //Input Reader atomic model declaration
 template<typename T>
-class InputReader_room_specs_in : public iestream_input<room_specs_in, T> {
+class InputReader_room_specs : public iestream_input<room_specs, T> {
     public:
-        InputReader_room_specs_in () = default;
-        InputReader_room_specs_in (const char* file_path) : iestream_input<room_specs_in,T> (file_path) {}
+        InputReader_room_specs () = default;
+        InputReader_room_specs (const char* file_path) : iestream_input<room_specs,T> (file_path) {}
 };
 
 
@@ -50,7 +50,7 @@ int main(){
     //Input Reader atomic model instantiation
     const char * i_input_data = "../room_input.txt";
     shared_ptr<dynamic::modeling::model> input_reader;
-    input_reader = dynamic::translate::make_dynamic_atomic_model<InputReader_room_specs_in, TIME, const char*>("input_reader", move(i_input_data));
+    input_reader = dynamic::translate::make_dynamic_atomic_model<InputReader_room_specs, TIME, const char*>("input_reader", move(i_input_data));
 
 
     //RoomSpecsFilter atomic model instantiation
@@ -66,7 +66,7 @@ int main(){
         dynamic::translate::make_EOC<Room_Specs_Filter_Ports::room_out,outp_out>("RoomSpecsFilter")
     };
     dynamic::modeling::ICs ics_TOP = {
-        dynamic::translate::make_IC<iestream_input_defs<room_specs_in>::out,Room_Specs_Filter_Ports::room_in>("input_reader","RoomSpecsFilter")
+        dynamic::translate::make_IC<iestream_input_defs<room_specs>::out,Room_Specs_Filter_Ports::room_in>("input_reader","RoomSpecsFilter")
     };
     shared_ptr<dynamic::modeling::coupled<TIME>> TOP;
     TOP = make_shared<dynamic::modeling::coupled<TIME>>(
