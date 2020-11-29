@@ -90,5 +90,5 @@ template<typename TIME> class Room_Specs_Filter{
     }
 
 };
-#endif
+
 
