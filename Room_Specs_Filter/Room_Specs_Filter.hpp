@@ -83,8 +83,7 @@ template<typename TIME> class Room_Specs_Filter{
 
     friend std::ostringstream& operator<<(std::ostringstream& os, const typename Room_Specs_Filter<TIME>::state_type& i) {
         for (int j = 0; j < (i.msgs_passing_filter).size(); j++){
-            os << "for person " << i.msgs_passing_filter[j].Person_ID << " " << i.msgs_passing_filter[j].people_in_room << " " << i.msgs_passing_filter[j].room_size << " " << i.msgs_passing_filter[j].viral_particles << " " << i.msgs_passing_filter[j].room_ID;
-        
+            os << "Person: " << i.msgs_passing_filter[j].Person_ID << "People in room: " << i.msgs_passing_filter[j].people_in_room << "Room size: " << i.msgs_passing_filter[j].room_size << "Viral Particles: " << i.msgs_passing_filter[j].viral_particles << "Room ID: " << i.msgs_passing_filter[j].room_ID;
         }
         return os;
     }
