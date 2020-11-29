@@ -15,8 +15,8 @@ using namespace std;
 //Port definition
 //definition of input/output events 
 struct Room_Specs_Filter_Ports{
-	struct room_in : public in_port<room_specs_in>{};
-	struct room_out : public out_port<room_specs_out>{};
+	struct room_in : public in_port<room_specs>{};
+	struct room_out : public out_port<room_specs>{};
 };
 
 template<typename TIME> class Room_Specs_Filter{
@@ -29,7 +29,7 @@ template<typename TIME> class Room_Specs_Filter{
 
 	//state definition 
 	struct state_type{
-		vector<room_specs_in> msgs_passing_filter;
+		vector<room_specs> msgs_passing_filter;
 	}; state_type state; 
 
     //default constructor
@@ -64,7 +64,7 @@ template<typename TIME> class Room_Specs_Filter{
     typename make_message_bags<output_ports>::type output() const{
  	    typename make_message_bags<output_ports>::type bags;
         for (int i = 0; i < state.msgs_passing_filter.size(); i++){
-            //get_messages<typename Room_Specs_Filter_Ports::room_out>(bags).push_back(state.msgs_passing_filter[i].IsSick); 
+            get_messages<typename Room_Specs_Filter_Ports::room_out>(bags).push_back(state.msgs_passing_filter[i].Person_ID); 
   
         }
     return bags;
@@ -79,7 +79,7 @@ template<typename TIME> class Room_Specs_Filter{
 		    next_internal = TIME();
 	    }
 	    return next_internal;
-    }
+    };
 
     friend std::ostringstream& operator<<(std::ostringstream& os, const typename Room_Specs_Filter<TIME>::state_type& i) {
         for (int j = 0; j < (i.msgs_passing_filter).size(); j++){
