@@ -64,7 +64,7 @@ template<typename TIME> class Room_Specs_Filter{
     typename make_message_bags<output_ports>::type output() const{
  	    typename make_message_bags<output_ports>::type bags;
         for (int i = 0; i < state.msgs_passing_filter.size(); i++){
-            get_messages<typename Room_Specs_Filter_Ports::room_out>(bags).push_back(state.msgs_passing_filter[i].Person_ID); 
+            get_messages<typename Room_Specs_Filter_Ports::room_out>(bags).push_back(state.msgs_passing_filter[i]); 
   
         }
     return bags;
