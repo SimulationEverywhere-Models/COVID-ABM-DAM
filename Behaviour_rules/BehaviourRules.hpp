@@ -76,6 +76,30 @@ template < typename TIME > class BehaviourRules {
 
    //internal transition
    void internal_transition() {
+      if(state.info.room_id_leaving != "" || state.info.room_id_entering != ""){
+         if (state.SpentInLocation < TimeInRoom && state.person.location == "4th_Mackenzie") { // && person in room or at home set movement info null 
+            state.info.room_id_leaving = "";
+            state.info.room_id_entering = "";
+         } else if (state.SpentInLocation < TimeAtHome && state.person.location == "home") {
+            state.info.room_id_leaving = "";
+            state.info.room_id_entering = "";
+         }
+      }else{
+         if (state.person.location == "4th_Mackenzie") { 
+            state.info.room_id_leaving = state.person.location; // Set to "room location"
+            state.info.room_id_entering = "home";
+            state.info.LeavingCampusFalseEnteringTrue = false;
+            state.person.location = "home";
+            state.SpentInLocation = TIME();
+         } else if (state.person.location == "home") { // same for previous
+            state.info.room_id_leaving = state.person.location;
+            state.info.room_id_entering = "4th_Mackenzie"; // Set to "room location"
+            state.info.LeavingCampusFalseEnteringTrue = true;
+            state.person.location = "4th_Mackenzie";
+            state.SpentInLocation = TIME();
+         }
+      }
+      /*
       if (state.SpentInLocation < TimeInRoom && state.person.location == "4th_Mackenzie") { // && person in room or at home set movement info null 
          state.info.room_id_leaving = "";
          state.info.room_id_entering = "";
@@ -95,6 +119,7 @@ template < typename TIME > class BehaviourRules {
          state.person.location = "4th_Mackenzie";
          state.SpentInLocation = TIME();
       }
+*/
 
       for (int i = 0; i < 4; i++) {
          if (state.person.behaviourRulesPerson[i].SafeDistanceProbability == "Low") {
