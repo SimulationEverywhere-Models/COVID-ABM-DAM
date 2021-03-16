@@ -4,10 +4,8 @@
 #include <cadmium/modeling/ports.hpp>
 #include <cadmium/modeling/message_bag.hpp>
 
-// https://www.learncpp.com/cpp-tutorial/header-guards/
 
 #include <cadmium/engine/pdevs_dynamic_runner.hpp>
-//#include <dynamic_json_exporter.hpp>
 #include <limits>
 #include <assert.h>
 #include <string>
@@ -18,11 +16,6 @@
 
 #include <cadmium/modeling/dynamic_model_translator.hpp>
 
-
-// #include "../Health_Status_Filter/health_message.hpp" // Health status
-// #include "../Room_Specs_Filter/message.hpp" // Room specs
-// #include "../Room_Model/room_message.hpp" // Room Model
-// //#include "......" // Person node
 #include "../data/message.hpp" // include message file
 
 #include "../data/void_load.hpp" 
@@ -86,25 +79,29 @@ template <typename TIME> class BehaviourRules {
 
     //internal transition
     void internal_transition() {
-        if (state.SpentInLocation < TimeInRoom && state.person.location == "4th_Mackenzie") { // && person in room or at home set movement info null 
-           state.info.room_id_leaving = "";
+       if(state.info.room_id_leaving != "" || state.info.room_id_entering != ""){
+         if (state.SpentInLocation < TimeInRoom && state.person.location == "4th_Mackenzie") { // && person in room or at home set movement info null 
+            state.info.room_id_leaving = "";
             state.info.room_id_entering = "";
-        }else if (state.SpentInLocation < TimeAtHome && state.person.location == "home") { 
-           state.info.room_id_leaving = "";
+         } else if (state.SpentInLocation < TimeAtHome && state.person.location == "home") {
+            state.info.room_id_leaving = "";
             state.info.room_id_entering = "";
-        } else if (state.SpentInLocation >= TimeInRoom && state.person.location == "4th_Mackenzie") { // add if the person is in the room && 
+         }
+      }else{
+         if (state.person.location == "4th_Mackenzie") { 
             state.info.room_id_leaving = state.person.location; // Set to "room location"
             state.info.room_id_entering = "home";
             state.info.LeavingCampusFalseEnteringTrue = false;
             state.person.location = "home";
             state.SpentInLocation = TIME();
-        } else if(state.SpentInLocation >= TimeAtHome && state.person.location == "home") { // same for previous
+         } else if (state.person.location == "home") { // same for previous
             state.info.room_id_leaving = state.person.location;
             state.info.room_id_entering = "4th_Mackenzie"; // Set to "room location"
             state.info.LeavingCampusFalseEnteringTrue = true;
             state.person.location = "4th_Mackenzie";
             state.SpentInLocation = TIME();
-        }
+         }
+      }
 
        
 
@@ -159,6 +156,7 @@ template <typename TIME> class BehaviourRules {
         }else if(msg_health_in.size()==1){
             state.person.isSick = msg_health_in[0];
         }
+        
         vector <room_specs> msg_in = get_messages<typename BehaviourRules_Ports::BehaviourRulesInRoom>(mbs);
             for( int i=0; i<msg_in.size(); i++){
                 state.ViralLoad += msg_in[i].viral_particles;
@@ -166,9 +164,7 @@ template <typename TIME> class BehaviourRules {
             if(state.ViralLoad > 1000){
                 state.person.isSick = true;
             }
-            if(state.person.isSick == true){
-                
-            }
+           
             state.SpentInLocation += e;
            cout<< state.SpentInLocation << "\n";
         
@@ -188,26 +184,36 @@ template <typename TIME> class BehaviourRules {
 
         if(state.info.room_id_leaving != ""){
             person_output.Person_ID = state.person.iD;
-            person_output.room_ID = state.person.location;
             person_output.InTrueOutFalse = state.info.LeavingCampusFalseEnteringTrue;
-            person_output.distance_from_people = state.DistanceFromPeople;
-            person_output.mask_wearing = state.MaskWearing;
             person_output.IsSick = state.person.isSick;
+            person_output.mask_wearing = state.MaskWearing;
+            person_output.room_ID = state.person.location;
+            person_output.distance_from_people = state.DistanceFromPeople;
             
             get_messages<typename BehaviourRules_Ports::BehaviourRulesOut>(bags).push_back(person_output);
         }
 
         if (state.info.room_id_entering != ""){
             person_output.Person_ID = state.person.iD;
-            person_output.room_ID = state.person.location;
             person_output.InTrueOutFalse = state.info.LeavingCampusFalseEnteringTrue;
-            person_output.distance_from_people = state.DistanceFromPeople;
-            person_output.mask_wearing = state.MaskWearing;
             person_output.IsSick = state.person.isSick;
+            person_output.mask_wearing = state.MaskWearing;
+            person_output.room_ID = state.person.location;
+            person_output.distance_from_people = state.DistanceFromPeople;
+            
 
              get_messages<typename BehaviourRules_Ports::BehaviourRulesOut>(bags).push_back(person_output);
         }
         
+        // cout<<person_output.distance_from_people<<"\n";
+        // cout<<person_output.Person_ID<<"\n";
+        // cout<<person_output.InTrueOutFalse<<"\n";
+        // cout<<person_output.IsSick<<"\n";
+        // cout<<person_output.room_ID<<"\n";
+        // cout<<person_output.mask_wearing<<"\n";
+
+
+
          return bags;
     }
 
