@@ -70,30 +70,36 @@ int main(){
     person4.load("../data/XML4.xml");
     person5.load("../data/XML5.xml");
 
+    long id1 = person1.iD;
+    long id2 = person2.iD;
+    long id3 = person3.iD;
+    long id4 = person4.iD;
+    long id5 = person5.iD;
+
     /****** Input Reader atomic model instantiation *******************/
     const char * i_input_data_health = "../input_data/health_generator.txt";
     shared_ptr<dynamic::modeling::model> input_reader_health = dynamic::translate::make_dynamic_atomic_model<InputReader_health, TIME, const char* >("input_reader_health" , move(i_input_data_health));
     
     /****** Health Status atomic model instantiation *****************/
-    shared_ptr<dynamic::modeling::model> health_status1 = dynamic::translate::make_dynamic_atomic_model<Health_Status_Filter, TIME, long&>("health_status1", person1.iD); //person1.id 
-    shared_ptr<dynamic::modeling::model> health_status2 = dynamic::translate::make_dynamic_atomic_model<Health_Status_Filter, TIME, long&>("health_status2", person2.iD);
-    shared_ptr<dynamic::modeling::model> health_status3 = dynamic::translate::make_dynamic_atomic_model<Health_Status_Filter, TIME, long&>("health_status3", person3.iD);
-    shared_ptr<dynamic::modeling::model> health_status4 = dynamic::translate::make_dynamic_atomic_model<Health_Status_Filter, TIME, long&>("health_status4", person4.iD);
-    shared_ptr<dynamic::modeling::model> health_status5 = dynamic::translate::make_dynamic_atomic_model<Health_Status_Filter, TIME, long&>("health_status5", person5.iD);
+    shared_ptr<dynamic::modeling::model> health_status1 = dynamic::translate::make_dynamic_atomic_model<Health_Status_Filter, TIME, long>("health_status1", move(id1)); //person1.id 
+    shared_ptr<dynamic::modeling::model> health_status2 = dynamic::translate::make_dynamic_atomic_model<Health_Status_Filter, TIME, long>("health_status2", move(id2));
+    shared_ptr<dynamic::modeling::model> health_status3 = dynamic::translate::make_dynamic_atomic_model<Health_Status_Filter, TIME, long>("health_status3", move(id3));
+    shared_ptr<dynamic::modeling::model> health_status4 = dynamic::translate::make_dynamic_atomic_model<Health_Status_Filter, TIME, long>("health_status4", move(id4));
+    shared_ptr<dynamic::modeling::model> health_status5 = dynamic::translate::make_dynamic_atomic_model<Health_Status_Filter, TIME, long>("health_status5", move(id5));
 
     /****** Room Specs atomic model instantiation *****************/
-    shared_ptr<dynamic::modeling::model> room_specs1 = dynamic::translate::make_dynamic_atomic_model<Room_Specs_Filter, TIME, long&>("room_specs1", person1.iD);
-    shared_ptr<dynamic::modeling::model> room_specs2 = dynamic::translate::make_dynamic_atomic_model<Room_Specs_Filter, TIME, long&>("room_specs2", person2.iD);
-    shared_ptr<dynamic::modeling::model> room_specs3 = dynamic::translate::make_dynamic_atomic_model<Room_Specs_Filter, TIME, long&>("room_specs3", person3.iD);
-    shared_ptr<dynamic::modeling::model> room_specs4 = dynamic::translate::make_dynamic_atomic_model<Room_Specs_Filter, TIME, long&>("room_specs4", person4.iD);
-    shared_ptr<dynamic::modeling::model> room_specs5 = dynamic::translate::make_dynamic_atomic_model<Room_Specs_Filter, TIME, long&>("room_specs5", person5.iD);
+    shared_ptr<dynamic::modeling::model> room_specs1 = dynamic::translate::make_dynamic_atomic_model<Room_Specs_Filter, TIME, long>("room_specs1", move(id1));
+    shared_ptr<dynamic::modeling::model> room_specs2 = dynamic::translate::make_dynamic_atomic_model<Room_Specs_Filter, TIME, long>("room_specs2", move(id2));
+    shared_ptr<dynamic::modeling::model> room_specs3 = dynamic::translate::make_dynamic_atomic_model<Room_Specs_Filter, TIME, long>("room_specs3", move(id3));
+    shared_ptr<dynamic::modeling::model> room_specs4 = dynamic::translate::make_dynamic_atomic_model<Room_Specs_Filter, TIME, long>("room_specs4", move(id4));
+    shared_ptr<dynamic::modeling::model> room_specs5 = dynamic::translate::make_dynamic_atomic_model<Room_Specs_Filter, TIME, long>("room_specs5", move(id5));
 
     /****** Behaviour Rules atomic model instantiation *****************/
-    shared_ptr<dynamic::modeling::model> behaviour_rules1 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules1", "../data/Student1.xml", TIME("01:30:00:00"), TIME("01:50:00:00"));
-    shared_ptr<dynamic::modeling::model> behaviour_rules2 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules2", "../data/XML2.xml", TIME("01:00:00:00"), TIME("00:50:00:00"));
-    shared_ptr<dynamic::modeling::model> behaviour_rules3 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules3", "../data/XML3.xml", TIME("01:40:00:00"), TIME("02:50:00:00"));
-    shared_ptr<dynamic::modeling::model> behaviour_rules4 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules4", "../data/XML4.xml", TIME("02:20:00:00"), TIME("01:00:00:00"));
-    shared_ptr<dynamic::modeling::model> behaviour_rules5 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules5", "../data/XML5.xml", TIME("01:30:00:00"), TIME("01:30:00:00"));
+    shared_ptr<dynamic::modeling::model> behaviour_rules1 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules1", "../data/Student1.xml", TIME("01:30:00:00"), TIME("01:00:00:00")); // add location person.location
+    shared_ptr<dynamic::modeling::model> behaviour_rules2 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules2", "../data/XML2.xml", TIME("02:30:00:00"), TIME("01:30:00:00"));
+    shared_ptr<dynamic::modeling::model> behaviour_rules3 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules3", "../data/XML3.xml", TIME("01:40:00:00"), TIME("01:00:00:00"));
+    shared_ptr<dynamic::modeling::model> behaviour_rules4 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules4", "../data/XML4.xml", TIME("02:20:00:00"), TIME("02:30:00:00"));
+    shared_ptr<dynamic::modeling::model> behaviour_rules5 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules5", "../data/XML5.xml", TIME("01:30:00:00"), TIME("01:40:00:00"));
 
     /****** Room Model atomic model instantiation **************/
     shared_ptr<dynamic::modeling::model> room_model = dynamic::translate::make_dynamic_atomic_model<Room_Model, TIME, string, long>("room_model", "4th_Mackenzie", 100);
@@ -283,7 +289,7 @@ int main(){
 
     //Runner call
     dynamic::engine::runner<NDTime, logger_top> r(TOP, {0});
-    r.run_until(NDTime("20:00:00:000"));
+    r.run_until(NDTime("20:00:00:000")); //issue?
     return 0;
 
 }
