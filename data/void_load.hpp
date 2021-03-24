@@ -18,8 +18,8 @@
 #include <memory>
 #include <iomanip>
 
-#include "../data/tinyxml.h"
-#include "../data/tinystr.h"
+#include "tinyxml.h"
+#include "tinystr.h"
 
 
 
@@ -83,6 +83,19 @@ namespace decision_maker_behaviour_structures{
     //vector<RoomSize> room_Size;
   };
 
+  class LocationPlan{
+  public:
+    LocationPlan(){}
+    LocationPlan(const string& Room, const long& timeInRoomMin ){
+      this->Room=Room;
+      this->timeInRoomMin=timeInRoomMin;
+
+    }
+    string Room;
+    long timeInRoomMin;
+
+  };
+
 
 
     /*******************************************/
@@ -99,6 +112,7 @@ namespace decision_maker_behaviour_structures{
     vector<Relationship>            relationship;
     vector<BehaviourRulesPerson>    behaviourRulesPerson;
     vector<BehaviourRulesRoom>      behaviourRulesRoom;
+    vector<LocationPlan>            locationPlan;
 
 
 void save(const char* pFilename){
@@ -259,7 +273,7 @@ void save(const char* pFilename){
           if (!pElem) return;
           const char* pID = pElem->GetText();
           iD =strtol(pID,NULL,10);
-         // cout<<setfill('0') << setw(4)<< iD <<endl;
+          cout<<setfill('0') << setw(4)<< iD <<endl;
         }
 
         // block: Location
@@ -286,7 +300,7 @@ void save(const char* pFilename){
           }else{
             isSick = true;
           }
-         //cout<< isSick <<endl;
+         cout<< isSick <<endl;
         }
 
         // block: SafeDistanceProbability
@@ -315,7 +329,7 @@ void save(const char* pFilename){
             if(pPerson) c.PersonID = pPerson;
             const char *pRelationship_type = pRelationshipNode->Attribute("type");
             if(pRelationship_type) c.Relationship_type = pRelationship_type;
-            //cout <<c.PersonID <<c.Relationship_type <<endl;
+            cout <<c.PersonID <<c.Relationship_type <<endl;
             relationship.push_back(c);
           }
         }
@@ -348,7 +362,7 @@ void save(const char* pFilename){
             if(!pBehaviourRoomNode) return;
             const char *pBehaviourRoomSize = pBehaviourRoomNode->Attribute("size");
             if(pBehaviourRoomSize) c.roomSize = pBehaviourRoomSize;
-           // cout <<c.roomSize <<endl;
+            cout <<c.roomSize <<endl;
             TiXmlElement* pGroupBehaviourNode=pBehaviourRoomNode->FirstChildElement();
             for(pGroupBehaviourNode; pGroupBehaviourNode; pGroupBehaviourNode=pGroupBehaviourNode->NextSiblingElement())
             {
@@ -361,13 +375,29 @@ void save(const char* pFilename){
               if(pProbability) d.SafeDistanceProbability = pProbability;
               const char *pChance = pGroupBehaviourNode->Attribute("chance");
               if(pChance) d.MaskProbability = pChance;
-             // cout <<d.group <<" " <<d.SafeDistanceProbability <<" " <<d.MaskProbability <<endl;
+              cout <<d.group <<" " <<d.SafeDistanceProbability <<" " <<d.MaskProbability <<endl;
               c.groupBehaviour.push_back(d);
             }
             behaviourRulesRoom.push_back(c);
           }
         }
-
+        
+        //Block: LocationPlan
+        {
+          locationPlan.clear(); // trash existing list    
+          TiXmlElement* pLocationPlanNode = hRoot.FirstChild( "LocationPlan" ).FirstChild().Element();
+          for( pLocationPlanNode; pLocationPlanNode; pLocationPlanNode=pLocationPlanNode->NextSiblingElement())
+          {
+            LocationPlan c;
+            const char* pRoom= pLocationPlanNode->Attribute("room");
+            if(pRoom) c.Room = pRoom;
+            const char *pTime_in_room = pLocationPlanNode->Attribute("timeinroom");
+            //if(pTime_in_room) c.timeInRoomMin = pTime_in_room;
+            c.timeInRoomMin =strtol(pTime_in_room,NULL,10);
+            cout <<c.Room << " " <<c.timeInRoomMin <<endl;
+            locationPlan.push_back(c);
+          }
+        }
 
       
    }	
