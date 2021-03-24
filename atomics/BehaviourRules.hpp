@@ -64,13 +64,14 @@ template <typename TIME> class BehaviourRules {
     BehaviourRules()noexcept{
         
     }
-
-   
      BehaviourRules (string file_name_in, TIME i_In_Room, TIME i_At_Home) noexcept{
         const char * in = file_name_in.c_str();
         state.person.load(in);
         TimeInRoom = i_In_Room; 
         TimeAtHome = i_At_Home;
+        state.info.room_id_entering = "4th_Mackenzie"; //added March 24 update
+        state.info.room_id_leaving = "home"; //added March 24 update
+        state.info.LeavingCampusFalseEnteringTrue = false; //added March 24 update
         state.MaskWearing = false;
         state.DistanceFromPeople = 0;
         state.ViralLoad = 0;
@@ -155,6 +156,7 @@ template <typename TIME> class BehaviourRules {
             assert(false);
         }else if(msg_health_in.size()==1){
             state.person.isSick = msg_health_in[0];
+            state.SpentInLocation = TIME();
         }
         
         vector <room_specs> msg_in = get_messages<typename BehaviourRules_Ports::BehaviourRulesInRoom>(mbs);
@@ -187,7 +189,7 @@ template <typename TIME> class BehaviourRules {
             person_output.InTrueOutFalse = state.info.LeavingCampusFalseEnteringTrue;
             person_output.IsSick = state.person.isSick;
             person_output.mask_wearing = state.MaskWearing;
-            person_output.room_ID = state.person.location;
+            person_output.room_ID_person = state.person.location;
             person_output.distance_from_people = state.DistanceFromPeople;
             
             get_messages<typename BehaviourRules_Ports::BehaviourRulesOut>(bags).push_back(person_output);
@@ -198,22 +200,13 @@ template <typename TIME> class BehaviourRules {
             person_output.InTrueOutFalse = state.info.LeavingCampusFalseEnteringTrue;
             person_output.IsSick = state.person.isSick;
             person_output.mask_wearing = state.MaskWearing;
-            person_output.room_ID = state.person.location;
+            person_output.room_ID_person = state.person.location;
             person_output.distance_from_people = state.DistanceFromPeople;
             
 
              get_messages<typename BehaviourRules_Ports::BehaviourRulesOut>(bags).push_back(person_output);
         }
         
-        // cout<<person_output.distance_from_people<<"\n";
-        // cout<<person_output.Person_ID<<"\n";
-        // cout<<person_output.InTrueOutFalse<<"\n";
-        // cout<<person_output.IsSick<<"\n";
-        // cout<<person_output.room_ID<<"\n";
-        // cout<<person_output.mask_wearing<<"\n";
-
-
-
          return bags;
     }
 
@@ -232,7 +225,7 @@ template <typename TIME> class BehaviourRules {
         }
 
         return next_internal;
-        cout<<next_internal<< "\n";
+        // cout<<next_internal<< "\n";
 
     };
 
