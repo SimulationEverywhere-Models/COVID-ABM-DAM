@@ -12,37 +12,35 @@ using namespace std;
 
 struct health_status{
     health_status(){}
-    health_status(long i_person_id, bool i_issick)
-   :Person_ID(i_person_id), IsSick(i_issick){}
+    health_status(long i_person_id_health, bool i_issick)
+   :Person_ID_health(i_person_id_health), IsSick(i_issick){}
     
-    long Person_ID; 
+    long Person_ID_health; 
     bool IsSick;
 };
 
 struct room_specs{
 room_specs(){}
-room_specs(long i_person_id, int i_people_in_room, float i_room_size, float i_viral_particles, string i_room_ID, int i_number_of_mask_wearers, int i_number_of_social_distancing)
-    :Person_ID(i_person_id), people_in_room(i_people_in_room), room_size(i_room_size), viral_particles(i_viral_particles), room_ID(i_room_ID), number_of_mask_wearers(i_number_of_mask_wearers), number_of_social_distancing(i_number_of_social_distancing){}
+room_specs(long i_person_id_room, int i_people_in_room, float i_room_size, float i_viral_particles, string i_room_ID_room)
+    :Person_ID_room(i_person_id_room), people_in_room(i_people_in_room), room_size(i_room_size), viral_particles(i_viral_particles), room_ID_room(i_room_ID_room){}
 
-    long Person_ID;
+    long Person_ID_room;
 	int people_in_room;
 	float room_size;
 	float viral_particles;
-	string room_ID;
-    int number_of_mask_wearers;
-	int number_of_social_distancing;
+	string room_ID_room;
 };
 
 struct person_node{
 person_node(){}
-person_node(long i_person_id, bool i_InTrueOutFalse, bool i_IsSick, bool i_mask_wearing, string i_room_ID, float i_distance_from_people)
-    :Person_ID(i_person_id), InTrueOutFalse(i_InTrueOutFalse), IsSick(i_IsSick), mask_wearing(i_mask_wearing), room_ID(i_room_ID), distance_from_people(i_distance_from_people){}
+person_node(long i_person_id, bool i_InTrueOutFalse, bool i_IsSick, bool i_mask_wearing, string i_room_ID_person, float i_distance_from_people)
+    :Person_ID(i_person_id), InTrueOutFalse(i_InTrueOutFalse), IsSick(i_IsSick), mask_wearing(i_mask_wearing), room_ID_person(i_room_ID_person), distance_from_people(i_distance_from_people){}
 
-    long Person_ID; //change back to long when xml is fixed
+    long Person_ID; 
     bool InTrueOutFalse;
 	bool IsSick;
 	bool mask_wearing;
-	string room_ID;
+	string room_ID_person;
     float distance_from_people;
 };
 
