@@ -1,4 +1,4 @@
-#include <cadmium/modeling/ports.hpp>
+include <cadmium/modeling/ports.hpp>
 #include <cadmium/modeling/message_bag.hpp>
 
 #include <limits>
@@ -48,7 +48,7 @@ template<typename TIME> class Room_Specs_Filter{
     //external transition function
     void external_transition(TIME, typename make_message_bags<input_ports>::type mbs){
         for (int i = 0; get_messages<typename Room_Specs_Filter_Ports::room_in>(mbs).size()>i; i++){
-       	    if(PERSON_ID == get_messages<typename Room_Specs_Filter_Ports::room_in>(mbs)[i].Person_ID){
+       	    if(PERSON_ID == get_messages<typename Room_Specs_Filter_Ports::room_in>(mbs)[i].Person_ID_room){
        		    state.msgs_passing_filter.push_back(get_messages<typename Room_Specs_Filter_Ports::room_in>(mbs)[i]);
       		}
     	}
@@ -83,7 +83,7 @@ template<typename TIME> class Room_Specs_Filter{
 
     friend std::ostringstream& operator<<(std::ostringstream& os, const typename Room_Specs_Filter<TIME>::state_type& i) {
         for (int j = 0; j < (i.msgs_passing_filter).size(); j++){
-            os << "Person: " << i.msgs_passing_filter[j].Person_ID << "  People in room: " << i.msgs_passing_filter[j].people_in_room << "  Room size: " << i.msgs_passing_filter[j].room_size << "  Viral Particles: " << i.msgs_passing_filter[j].viral_particles << "  Room ID: " << i.msgs_passing_filter[j].room_ID;
+            os << "Person: " << i.msgs_passing_filter[j].Person_ID_room << "  People in room: " << i.msgs_passing_filter[j].people_in_room << "  Room size: " << i.msgs_passing_filter[j].room_size << "  Viral Particles: " << i.msgs_passing_filter[j].viral_particles << "  Room ID: " << i.msgs_passing_filter[j].room_ID_room;
         
         }
         return os;
