@@ -59,7 +59,7 @@ template <typename TIME> class Health_Status_Filter{
     void external_transition(TIME e, typename make_message_bags<input_ports>::type mbs){
     	//Loop!
 	for (int i = 0 ; get_messages<typename Health_Status_Filter_Ports::health_in>(mbs).size()>i ; i++ ){
-       	if(PERSON_ID == get_messages<typename Health_Status_Filter_Ports::health_in>(mbs)[i].Person_ID){
+       	if(PERSON_ID == get_messages<typename Health_Status_Filter_Ports::health_in>(mbs)[i].Person_ID_health){
        		state.msgs_passing_filter.push_back(get_messages<typename Health_Status_Filter_Ports::health_in>(mbs)[i]);
       		}
     	}
@@ -100,7 +100,7 @@ template <typename TIME> class Health_Status_Filter{
 
     friend std::ostringstream& operator<<(std::ostringstream& os, const typename Health_Status_Filter<TIME>::state_type& i) {
         for (int j = 0; j < (i.msgs_passing_filter).size(); j++){
-            os << "for person" << i.msgs_passing_filter[j].Person_ID << " " << i.msgs_passing_filter[j].IsSick;
+            os << "for person: " << i.msgs_passing_filter[j].Person_ID_health << " " << i.msgs_passing_filter[j].IsSick;
         
         }
         return os;
