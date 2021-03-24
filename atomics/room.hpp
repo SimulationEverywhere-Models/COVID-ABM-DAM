@@ -89,7 +89,7 @@ template<typename TIME> class Room_Model{
 
     //update viral load
     void external_transition(TIME e, typename make_message_bags<input_ports>::type mbs){
-        cout << "sick: " << state.NumberOfSickPeople << endl;
+      //  cout << "sick: " << state.NumberOfSickPeople << endl;
         
         if (state.NumberOfSickPeople > 0) {
            float h_min = e.getHours()*60;
@@ -112,10 +112,9 @@ template<typename TIME> class Room_Model{
             cout << "people in room:" << state.People_In_Room.size() << endl;
             for(int i =0; i< state.People_In_Room.size(); i++){
                 room_specs person_virus;
-                person_virus.Person_ID = state.People_In_Room[i].Person_ID;
-                person_virus.room_ID = state.People_In_Room[i].room_ID;
+                person_virus.Person_ID_room = state.People_In_Room[i].Person_ID;
+                person_virus.room_ID_room = state.People_In_Room[i].room_ID_person;
                 person_virus.room_size = RoomSize; 
-                //person_virus.number_of_mask_wearers = state.NumberOfPeopleWearingMasks;
                 if(state.People_In_Room[i].mask_wearing){
                 
                     person_virus.viral_particles = state.ViralLoadPerPersonMask;
@@ -126,17 +125,11 @@ template<typename TIME> class Room_Model{
                 state.Exposed_To_Virus.push_back(person_virus);
             }
         }
-        //cout<<"size of exposed to virus is: &&&& "<<state.Exposed_To_Virus.size() << endl;
-        //int m =0;
-        /*while(m<2){
-           cout << "inside while: " << m << endl;
-           m++;
-        }
-     */
+       
         vector<person_node> msg_bag = get_messages<typename Room_Model_Ports::room_model_in>(mbs);
        // cout << "msg bas size: " << msg_bag.size() << endl;
        for(int i = 0 ; i < msg_bag.size(); i++ ){
-            cout << "inside the msg loop" << endl;
+           // cout << "inside the msg loop" << endl;
             room_specs person_virus;
             person_node msg_in = msg_bag[i];
             //Person coming in
@@ -155,18 +148,18 @@ template<typename TIME> class Room_Model{
                     state.NumberOfPeople++;
                     //cout<< state.NumberOfPeople <<" ";
                     person_virus.people_in_room = state.NumberOfPeople;
-                    person_virus.Person_ID = msg_in.Person_ID;
-                    person_virus.room_ID = msg_in.room_ID;
+                    person_virus.Person_ID_room = msg_in.Person_ID;
+                    person_virus.room_ID_room = msg_in.room_ID_person;
                     person_virus.room_size = RoomSize;
                     state.People_In_Room.push_back(msg_in);
                 
                     if (msg_in.mask_wearing == true) {
                         state.NumberOfPeopleWearingMasks++;
-                        person_virus.number_of_mask_wearers = state.NumberOfPeopleWearingMasks;
+                       // person_virus.number_of_mask_wearers = state.NumberOfPeopleWearingMasks;
                     }
                     if (msg_in.distance_from_people >= SOCIAL_DISTANCE) {
                         state.NumberOfPeopleSocialDistancing++;
-                        person_virus.number_of_social_distancing = state.NumberOfPeopleSocialDistancing;
+                        //person_virus.number_of_social_distancing = state.NumberOfPeopleSocialDistancing;
                     }
                     if (msg_in.IsSick == true){
                          state.NumberOfSickPeople++;
@@ -174,11 +167,11 @@ template<typename TIME> class Room_Model{
                     person_virus.viral_particles = 0;
                     state.Exposed_To_Virus.push_back(person_virus);
                 }
-            }else{ //(get_messages<typename Room_Model_Ports::room_model_in>(mbs)[i].InOut == false){
+            }else{ 
                 for(int j =0; j< state.People_In_Room.size(); j++){
                     if(msg_in.Person_ID == state.People_In_Room[j].Person_ID) {
                        state.People_In_Room.erase(state.People_In_Room.begin()+j);
-                       state.Exposed_To_Virus.erase(state.Exposed_To_Virus.begin()+j);
+                       state.Exposed_To_Virus.erase(state.Exposed_To_Virus.begin()+j); //issue?
                         state.NumberOfPeople--;
                         if (msg_in.mask_wearing == true) {
                              state.NumberOfPeopleWearingMasks--;
@@ -197,9 +190,9 @@ template<typename TIME> class Room_Model{
       // cout<< state.Exposed_To_Virus <<" ";
         }
         for (int l = 0; l < state.People_In_Room.size(); l++){
-            state.Exposed_To_Virus[l].number_of_social_distancing = state.NumberOfPeopleSocialDistancing;
+            //state.Exposed_To_Virus[l].number_of_social_distancing = state.NumberOfPeopleSocialDistancing;
             state.Exposed_To_Virus[l].people_in_room = state.NumberOfPeople;
-            state.Exposed_To_Virus[l].number_of_mask_wearers = state.NumberOfPeopleWearingMasks;
+            //state.Exposed_To_Virus[l].number_of_mask_wearers = state.NumberOfPeopleWearingMasks;
         }
     
      
@@ -240,8 +233,8 @@ template<typename TIME> class Room_Model{
        // }
         
         for (int j=0; j<(i.Exposed_To_Virus).size(); j++){
-            os <<" Person ID: "<< i.Exposed_To_Virus[j].Person_ID  << " Number of people in room: " << i.Exposed_To_Virus[j].people_in_room << " Room Size: " <<i.Exposed_To_Virus[j].room_size
-            << " Viral Particles: " << i.Exposed_To_Virus[j].viral_particles << " Room ID: " << i.Exposed_To_Virus[j].room_ID << "\n ";
+            os <<" Person ID: "<< i.Exposed_To_Virus[j].Person_ID_room  <<  " Room Size: " <<i.Exposed_To_Virus[j].room_size
+            << " Viral Particles: " << i.Exposed_To_Virus[j].viral_particles << " Room ID: " << i.Exposed_To_Virus[j].room_ID_room << "\n ";
 
         }
         
