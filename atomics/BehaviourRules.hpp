@@ -44,7 +44,7 @@ template <typename TIME> class BehaviourRules {
     struct MovementInfo {
         string room_id_entering = "";
         string room_id_leaving = "";
-        bool LeavingCampusFalseEnteringTrue = false;
+        bool LeavingCampusFalseEnteringTrue = true;
     };
     
 
@@ -69,9 +69,10 @@ template <typename TIME> class BehaviourRules {
         state.person.load(in);
         TimeInRoom = i_In_Room; 
         TimeAtHome = i_At_Home;
+        state.person.location = "4th_Mackenzie";
         state.info.room_id_entering = "4th_Mackenzie"; //added March 24 update
         state.info.room_id_leaving = "home"; //added March 24 update
-        state.info.LeavingCampusFalseEnteringTrue = false; //added March 24 update
+        state.info.LeavingCampusFalseEnteringTrue = true; //added March 24 update
         state.MaskWearing = false;
         state.DistanceFromPeople = 0;
         state.ViralLoad = 0;
@@ -214,12 +215,12 @@ template <typename TIME> class BehaviourRules {
     //time advance function
     TIME time_advance() const{
         TIME next_internal;
-        if (state.SpentInLocation < TimeInRoom && state.person.location == "4th_Mackenzie") { // in room  
-            next_internal = TimeInRoom - state.SpentInLocation;
-        } else if (state.SpentInLocation < TimeAtHome && state.person.location == "home") { 
-            next_internal = TimeAtHome - state.SpentInLocation;
-        } else if (state.info.room_id_leaving != "" && state.info.room_id_entering != "") { // if NOT null, ta 0
+        if (state.info.room_id_leaving != "" && state.info.room_id_entering != "") { // if NOT null, ta 0
             next_internal = TIME();
+       }else if (state.SpentInLocation <= TimeInRoom && state.person.location == "4th_Mackenzie") { // in room  
+            next_internal = TimeInRoom - state.SpentInLocation;
+        } else if (state.SpentInLocation <= TimeAtHome && state.person.location == "home") { 
+            next_internal = TimeAtHome - state.SpentInLocation;
         }else {
             next_internal = numeric_limits<TIME>::infinity();
         }
