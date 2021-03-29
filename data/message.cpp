@@ -1,61 +1,57 @@
-#ifndef BOOST_SIMULATION_MESSAGE_HPP
-#define BOOST_SIMULATION_MESSAGE_HPP
-
+#include <math.h> 
 #include <assert.h>
 #include <iostream>
+#include <fstream>
 #include <string>
 
+#include "message.hpp"
 
-using namespace std;
+/************* Output stream ************************/
+//output content of the structure
 
-/************** Messages *******************/
+ostream& operator<<(ostream& os, const health_status& msg) {
+  os << msg.Person_ID_health << " " << msg.IsSick;
+  return os;
+}
 
-struct health_status{
-    health_status(){}
-    health_status(long i_person_id_health, bool i_issick)
-   :Person_ID_health(i_person_id_health), IsSick(i_issick){}
-    
-    long Person_ID_health; 
-    bool IsSick;
-};
+ostream& operator<<(ostream& os, const room_specs& msg) {
+    os << msg.Person_ID_room << " " << msg.people_in_room << " " << msg.room_size << " " << msg.viral_particles << " " << msg.room_ID_room;
+    return os;
+}
 
-struct room_specs{
-room_specs(){}
-room_specs(long i_person_id_room, int i_people_in_room, float i_room_size, float i_viral_particles, string i_room_ID_room)
-    :Person_ID_room(i_person_id_room), people_in_room(i_people_in_room), room_size(i_room_size), viral_particles(i_viral_particles), room_ID_room(i_room_ID_room){}
+ostream& operator<<(ostream& os, const person_node& msg) {
+    os << msg.Person_ID << " " << msg.Room_ID_Leaving << " " << msg.Room_ID_Entering << " " << msg.IsSick << " " << msg.mask_wearing << " " << msg.room_ID_person << " " << msg.distance_from_people;
+    return os;
+}
 
-    long Person_ID_room;
-	int people_in_room;
-	float room_size;
-	float viral_particles;
-	string room_ID_room;
-};
+/************* Input stream ************************/
+//fill structure with data from file
 
-struct person_node{
-person_node(){}
-person_node(long i_person_id, string i_room_leaving, string i_room_entering, bool i_IsSick, bool i_mask_wearing, string i_room_ID_person, float i_distance_from_people)
-    :Person_ID(i_person_id), Room_ID_Leaving(i_room_leaving), Room_ID_Entering(i_room_entering), IsSick(i_IsSick), mask_wearing(i_mask_wearing), room_ID_person(i_room_ID_person), distance_from_people(i_distance_from_people){}
+istream& operator>> (istream& is, health_status& msg) {
+  is >> msg.Person_ID_health;
+  is >> msg.IsSick;
 
-    long Person_ID; 
-    string Room_ID_Leaving;
-    string Room_ID_Entering;
-	bool IsSick;
-	bool mask_wearing;
-	string room_ID_person;
-    float distance_from_people;
-};
+  return is;
+}
 
-/***************** Input streams ******************/
+istream& operator>> (istream& is, room_specs& msg) {
+    is >> msg.Person_ID_room;
+    is >> msg.people_in_room;
+    is >> msg.room_size;
+    is >> msg.viral_particles;
+    is >> msg.room_ID_room;
 
-istream& operator>> (istream& is, health_status& msg);
-istream& operator>> (istream& is, room_specs& msg);
-istream& operator>> (istream& is, person_node& msg);
+ return is; 
+}
 
+istream& operator>> (istream& is, person_node& msg) {
+    is >> msg.Person_ID;
+    is >> msg.Room_ID_Leaving;
+    is >> msg.Room_ID_Entering;
+    is >> msg.IsSick;
+    is >> msg.mask_wearing;
+    is >> msg.room_ID_person;
+    is >> msg.distance_from_people;
 
-/***************** Output streams ******************/
-
-ostream& operator<< (ostream& os, const health_status& msg);
-ostream& operator<< (ostream& os, room_specs& msg);
-ostream& operator<< (ostream& os, person_node& msg);
-
-#endif
+    return is;
+}
