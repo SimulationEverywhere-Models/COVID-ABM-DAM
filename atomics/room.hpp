@@ -133,7 +133,7 @@ template<typename TIME> class Room_Model{
             room_specs person_virus;
             person_node msg_in = msg_bag[i];
             //Person coming in
-            if (msg_in.InTrueOutFalse == true){ // rename InOut
+            if (msg_in.Room_ID_Entering == RoomID){ // rename InOut
                 //cout << "person in" << endl;
             
                 bool PersonInRoom = false;
@@ -146,32 +146,28 @@ template<typename TIME> class Room_Model{
                 }
                 if(PersonInRoom == false){
                     state.NumberOfPeople++;
-                    //cout<< state.NumberOfPeople <<" ";
                     person_virus.people_in_room = state.NumberOfPeople;
                     person_virus.Person_ID_room = msg_in.Person_ID;
                     person_virus.room_ID_room = msg_in.room_ID_person;
                     person_virus.room_size = RoomSize;
-                    state.People_In_Room.push_back(msg_in);
                 
                     if (msg_in.mask_wearing == true) {
                         state.NumberOfPeopleWearingMasks++;
-                       // person_virus.number_of_mask_wearers = state.NumberOfPeopleWearingMasks;
                     }
                     if (msg_in.distance_from_people >= SOCIAL_DISTANCE) {
                         state.NumberOfPeopleSocialDistancing++;
-                        //person_virus.number_of_social_distancing = state.NumberOfPeopleSocialDistancing;
                     }
                     if (msg_in.IsSick == true){
                          state.NumberOfSickPeople++;
                     }  
                     person_virus.viral_particles = 0;
                     state.Exposed_To_Virus.push_back(person_virus);
+                    state.People_In_Room.push_back(msg_in);
                 }
-            }else{ 
+            }else if(msg_in.Room_ID_Leaving == RoomID){ 
                 for(int j =0; j< state.People_In_Room.size(); j++){
                     if(msg_in.Person_ID == state.People_In_Room[j].Person_ID) {
                        state.People_In_Room.erase(state.People_In_Room.begin()+j);
-                       state.Exposed_To_Virus.erase(state.Exposed_To_Virus.begin()+j); //issue?
                         state.NumberOfPeople--;
                         if (msg_in.mask_wearing == true) {
                              state.NumberOfPeopleWearingMasks--;
@@ -182,12 +178,14 @@ template<typename TIME> class Room_Model{
                          if (get_messages<typename Room_Model_Ports::room_model_in>(mbs)[i].IsSick == true){
                             state.NumberOfSickPeople--;
                          }
+                         if(state.NumberOfSickPeople > 0){
+                             state.Exposed_To_Virus.erase(state.Exposed_To_Virus.begin()+j);
+                         }
                         break;
                     }
                 }          
             
             }
-      // cout<< state.Exposed_To_Virus <<" ";
         }
         for (int l = 0; l < state.People_In_Room.size(); l++){
             //state.Exposed_To_Virus[l].number_of_social_distancing = state.NumberOfPeopleSocialDistancing;
