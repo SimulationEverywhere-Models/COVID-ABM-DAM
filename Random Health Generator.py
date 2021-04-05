@@ -1,3 +1,11 @@
+"""
+This script will randomly generate the Health Generator file.
+The script will either:
+    1. Randomly generate the Health Generator input file with a specified number of sick people, or
+    2. Randomly generate the Health Generator input file with a random number of sick people
+Make sure to change thy directory to match thy computer.
+"""
+
 # imports
 import random
 
