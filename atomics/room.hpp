@@ -17,13 +17,15 @@
 #define SOCIAL_DISTANCE 2
 
 
+
 using namespace cadmium;
 using namespace std;
 
 //Port definition
 //definition of input/output events
 struct Room_Model_Ports{
-    struct room_model_in : public in_port<person_node>{};
+    struct room_model_in_entering : public in_port<person_node>{};
+    struct room_model_in_leaving : public in_port<person_node>{};
     struct room_model_out : public out_port<room_specs>{};
 };
 
@@ -33,7 +35,7 @@ template<typename TIME> class Room_Model{
     long RoomSize;
     string RoomID;
 
-    using input_ports=std::tuple<typename Room_Model_Ports::room_model_in>;
+    using input_ports=std::tuple<typename Room_Model_Ports::room_model_in_entering, Room_Model_Ports::room_model_in_leaving>;
     using output_ports=std::tuple<typename Room_Model_Ports::room_model_out>;
 
 
@@ -126,67 +128,106 @@ template<typename TIME> class Room_Model{
             }
         }
        
-        vector<person_node> msg_bag = get_messages<typename Room_Model_Ports::room_model_in>(mbs);
+        vector<person_node> msg_bag = get_messages<typename Room_Model_Ports::room_model_in_entering>(mbs);
+        vector<person_node> msg_bag2 = get_messages<typename Room_Model_Ports::room_model_in_leaving>(mbs);
+        // cout << msg_bag2.size() << "\n";
+        // cout << msg_bag.size() << "\n";
+        room_specs person_virus;
+        bool PersonInRoom = false;
        // cout << "msg bas size: " << msg_bag.size() << endl;
+    //   if (msg_bag.empty()!= true) {
        for(int i = 0 ; i < msg_bag.size(); i++ ){
-           // cout << "inside the msg loop" << endl;
-            room_specs person_virus;
-            person_node msg_in = msg_bag[i];
+            person_node msg_in_entering = msg_bag[i];
             //Person coming in
-            if (msg_in.Room_ID_Entering == RoomID){ // rename InOut
-                //cout << "person in" << endl;
-            
-                bool PersonInRoom = false;
-
+            if (msg_in_entering.Room_ID_Entering == RoomID){ // rename InOut
                 for (int k =0; k < state.People_In_Room.size(); k++){
-                    if(msg_in.Person_ID == state.People_In_Room[k].Person_ID){
+                    if(msg_in_entering.Person_ID == state.People_In_Room[k].Person_ID){
                         PersonInRoom = true;
+                        if(state.People_In_Room[k].IsSick != msg_in_entering.IsSick){
+                            state.People_In_Room[k].IsSick = msg_in_entering.IsSick;
+                        if(msg_in_entering.IsSick == true){
+                            state.NumberOfSickPeople++;
+                        }else{
+                            state.NumberOfSickPeople--;
+                        }
+                    }
+                        if(state.People_In_Room[k].mask_wearing != msg_in_entering.mask_wearing){
+                            state.People_In_Room[k].mask_wearing = msg_in_entering.mask_wearing;
+                            if (msg_in_entering.mask_wearing == true) {
+                            state.NumberOfPeopleWearingMasks++;
+                            }else{
+                                state.NumberOfPeopleWearingMasks--;
+                            }
+                        }
+                        if(state.People_In_Room[k].distance_from_people != msg_in_entering.distance_from_people){
+                            if (msg_in_entering.distance_from_people >= SOCIAL_DISTANCE) {
+                            state.NumberOfPeopleSocialDistancing++;
+                            }else{
+                                state.NumberOfPeopleSocialDistancing--;
+                            }
+                        }
                         break;
                     }
                 }
                 if(PersonInRoom == false){
                     state.NumberOfPeople++;
                     person_virus.people_in_room = state.NumberOfPeople;
-                    person_virus.Person_ID_room = msg_in.Person_ID;
-                    person_virus.room_ID_room = msg_in.room_ID_person;
+                    person_virus.Person_ID_room = msg_in_entering.Person_ID;
+                    person_virus.room_ID_room = msg_in_entering.room_ID_person;
                     person_virus.room_size = RoomSize;
                 
-                    if (msg_in.mask_wearing == true) {
+                    if (msg_in_entering.mask_wearing == true) {
                         state.NumberOfPeopleWearingMasks++;
                     }
-                    if (msg_in.distance_from_people >= SOCIAL_DISTANCE) {
+                    if (msg_in_entering.distance_from_people >= SOCIAL_DISTANCE) {
                         state.NumberOfPeopleSocialDistancing++;
                     }
-                    if (msg_in.IsSick == true){
+                    if (msg_in_entering.IsSick == true){
                          state.NumberOfSickPeople++;
                     }  
                     person_virus.viral_particles = 0;
                     state.Exposed_To_Virus.push_back(person_virus);
-                    state.People_In_Room.push_back(msg_in);
+                    state.People_In_Room.push_back(msg_in_entering);
                 }
-            }else if(msg_in.Room_ID_Leaving == RoomID){ 
+            }
+       }
+   //    }
+       // processing people leaving the room
+       for(int s = 0 ; s < msg_bag2.size(); s++){ 
+          // cout << "msg bag size: " << msg_bag2.size() << endl;
+           person_node msg_in_leaving = msg_bag2[s];
+          if(msg_in_leaving.Room_ID_Leaving == RoomID ){ 
                 for(int j =0; j< state.People_In_Room.size(); j++){
-                    if(msg_in.Person_ID == state.People_In_Room[j].Person_ID) {
+                    cout << msg_in_leaving.Person_ID << " vs " << state.People_In_Room[j].Person_ID << "\n";
+                    if(msg_in_leaving.Person_ID == state.People_In_Room[j].Person_ID) {
                        state.People_In_Room.erase(state.People_In_Room.begin()+j);
                         state.NumberOfPeople--;
-                        if (msg_in.mask_wearing == true) {
+                        if (msg_in_leaving.mask_wearing == true) {
                              state.NumberOfPeopleWearingMasks--;
                         }
-                        if (get_messages<typename Room_Model_Ports::room_model_in>(mbs)[i].distance_from_people >= SOCIAL_DISTANCE) {
+                        if (msg_in_leaving.distance_from_people >= SOCIAL_DISTANCE) {
                             state.NumberOfPeopleSocialDistancing--;
                          }
-                         if (get_messages<typename Room_Model_Ports::room_model_in>(mbs)[i].IsSick == true){
+                         if (msg_in_leaving.IsSick == true){
                             state.NumberOfSickPeople--;
                          }
                          if(state.NumberOfSickPeople > 0){
                              state.Exposed_To_Virus.erase(state.Exposed_To_Virus.begin()+j);
                          }
-                        break;
+                         break;
                     }
                 }          
             
             }
-        }
+
+           }
+    
+            if(state.NumberOfPeople == 0){
+                state.NumberOfPeopleSocialDistancing = 0;
+                state.NumberOfPeopleWearingMasks = 0;
+                state.NumberOfSickPeople = 0;
+            }
+        
         for (int l = 0; l < state.People_In_Room.size(); l++){
             //state.Exposed_To_Virus[l].number_of_social_distancing = state.NumberOfPeopleSocialDistancing;
             state.Exposed_To_Virus[l].people_in_room = state.NumberOfPeople;
@@ -227,7 +268,7 @@ template<typename TIME> class Room_Model{
     
     friend std::ostringstream& operator<<(std::ostringstream& os, const typename Room_Model<TIME>::state_type& i){
       //  if(int k=(i.Exposed_To_Virus).size()){
-        os << "Number of People in room "<< i.NumberOfPeople <<" number of people wearing masks: " << i.NumberOfPeopleWearingMasks << " Number of people social distancing: " << i.NumberOfPeopleSocialDistancing << " Number of sick people: " << i.NumberOfSickPeople <<"\n ";
+        os << "Number of People in room: "<< i.NumberOfPeople <<" number of people wearing masks: " << i.NumberOfPeopleWearingMasks << " Number of people social distancing: " << i.NumberOfPeopleSocialDistancing << " Number of sick people: " << i.NumberOfSickPeople <<"\n ";
        // }
         
         for (int j=0; j<(i.Exposed_To_Virus).size(); j++){
