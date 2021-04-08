@@ -24,6 +24,8 @@
 #include "atomics/Health_Status_Filter.hpp"
 #include "atomics/Room_Specs_Filter.hpp"
 #include "atomics/BehaviourRules.hpp"
+#include "atomics/room_entering.hpp"
+#include "atomics/room_leaving.hpp"
 #include "atomics/room.hpp"
 
 //C++ headers
@@ -42,10 +44,12 @@ using TIME = NDTime;
 struct inp_in1 : public cadmium::in_port<health_status>{}; //change variable names 
 struct inp_in2 : public cadmium::in_port<room_specs>{};
 struct inp_SIM : public cadmium::in_port<health_status>{};
+struct inp_mov : public cadmium::in_port<person_node>{};
 // add another input for the generator
 
 /***** Define output ports for coupled model *****/
 struct outp_out : public cadmium::out_port<person_node>{};
+struct outp_room : public cadmium::out_port<room_specs>{};
 
 
 /****** Input Reader atomic model declaration *******************/
@@ -57,6 +61,8 @@ class InputReader_health : public iestream_input<health_status, T> {
 };
 
 int main(){
+
+    string room_ID = "4th_Mackenzie";
     
     DecisionMakerBehaviour person1;
     DecisionMakerBehaviour person2;
@@ -96,13 +102,20 @@ int main(){
 
     /****** Behaviour Rules atomic model instantiation *****************/
     shared_ptr<dynamic::modeling::model> behaviour_rules1 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules1", "../data/Student1.xml", TIME("01:30:00:00"), TIME("01:00:00:00")); // add location person.location
-    shared_ptr<dynamic::modeling::model> behaviour_rules2 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules2", "../data/XML2.xml", TIME("02:30:00:00"), TIME("01:30:00:00"));
-    shared_ptr<dynamic::modeling::model> behaviour_rules3 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules3", "../data/XML3.xml", TIME("01:40:00:00"), TIME("01:00:00:00"));
-    shared_ptr<dynamic::modeling::model> behaviour_rules4 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules4", "../data/XML4.xml", TIME("02:20:00:00"), TIME("02:30:00:00"));
-    shared_ptr<dynamic::modeling::model> behaviour_rules5 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules5", "../data/XML5.xml", TIME("01:30:00:00"), TIME("01:40:00:00"));
+    shared_ptr<dynamic::modeling::model> behaviour_rules2 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules2", "../data/XML2.xml", TIME("02:00:00:00"), TIME("01:00:00:00"));
+    shared_ptr<dynamic::modeling::model> behaviour_rules3 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules3", "../data/XML3.xml", TIME("01:30:00:00"), TIME("01:00:00:00"));
+    shared_ptr<dynamic::modeling::model> behaviour_rules4 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules4", "../data/XML4.xml", TIME("02:00:00:00"), TIME("01:00:00:00"));
+    shared_ptr<dynamic::modeling::model> behaviour_rules5 = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>("behaviour_rules5", "../data/XML5.xml", TIME("01:30:00:00"), TIME("01:00:00:00"));
 
     /****** Room Model atomic model instantiation **************/
     shared_ptr<dynamic::modeling::model> room_model = dynamic::translate::make_dynamic_atomic_model<Room_Model, TIME, string, long>("room_model", "4th_Mackenzie", 100);
+
+    /****** Room Entering Filter ***************/
+     shared_ptr<dynamic::modeling::model> room_entering1 = dynamic::translate::make_dynamic_atomic_model<room_entering, TIME, string>("room_entering", "4th_Mackenzie");
+
+     /****** Room Leaving Filter ***************/
+    shared_ptr<dynamic::modeling::model> room_leaving1 = dynamic::translate::make_dynamic_atomic_model<room_leaving, TIME, string> ("room_leaving", "4th_Mackenzie");
+
 
     /*********** NODE 1 COUPLED MODEL *************/
     dynamic::modeling::Ports iports_node1 = {typeid(inp_in1),typeid(inp_in2)};
@@ -209,10 +222,33 @@ int main(){
         "NODE5", submodels_node5, iports_node5, oports_node5, eics_node5, eocs_node5, ics_node5
     );
 
+    /************ ROOM FILTER MODEL *****************/
+    dynamic::modeling::Ports iports_ROOM = {typeid(inp_mov)};
+    dynamic::modeling::Ports oports_ROOM = {typeid(outp_room)};
+    dynamic::modeling::Models submodels_ROOM = {room_model, room_entering1, room_leaving1};
+    dynamic::modeling::EICs eics_ROOM = {
+        dynamic::translate::make_EIC<inp_mov, room_leaving_ports::room_leaving_in>("room_leaving"),
+        dynamic::translate::make_EIC<inp_mov, room_entering_ports::room_entering_in>("room_entering")
+    };
+    dynamic::modeling::EOCs eocs_ROOM = {
+        dynamic::translate::make_EOC<Room_Model_Ports::room_model_out, outp_room>("room_model")
+    };
+    dynamic::modeling::ICs ics_ROOM = {
+        dynamic::translate::make_IC<room_leaving_ports::room_leaving_out, Room_Model_Ports::room_model_in_leaving>("room_leaving", "room_model"),
+        dynamic::translate::make_IC<room_entering_ports::room_entering_out, Room_Model_Ports::room_model_in_entering>("room_entering","room_model")
+    };
+     shared_ptr<dynamic::modeling::coupled<TIME>> ROOM;
+    ROOM = make_shared<dynamic::modeling::coupled<TIME>>(
+        "ROOM", submodels_ROOM, iports_ROOM, oports_ROOM, eics_ROOM, eocs_ROOM, ics_ROOM
+    );
+
+
+
+
     /********* SIMULATOR MODEL *********/
     dynamic::modeling::Ports iports_SIM = {typeid(inp_SIM)}; // sim input
     dynamic::modeling::Ports oports_SIM = {typeid(outp_out)};
-    dynamic::modeling::Models submodels_SIM = {room_model, NODE1, NODE2, NODE3, NODE4, NODE5};
+    dynamic::modeling::Models submodels_SIM = {ROOM, NODE1, NODE2, NODE3, NODE4, NODE5};
     dynamic::modeling::EICs eics_SIM = {
         dynamic::translate::make_EIC<inp_SIM, inp_in1>("NODE1"),
         dynamic::translate::make_EIC<inp_SIM, inp_in1>("NODE2"),
@@ -229,20 +265,20 @@ int main(){
         dynamic::translate::make_EOC<outp_out,outp_out>("NODE5")
     };
      dynamic::modeling::ICs ics_SIM = {
-        dynamic::translate::make_IC<outp_out, Room_Model_Ports::room_model_in>("NODE1","room_model"),
-        dynamic::translate::make_IC<Room_Model_Ports::room_model_out, inp_in2>("room_model","NODE1"),
+        dynamic::translate::make_IC<outp_out, inp_mov>("NODE1","ROOM"),
+        dynamic::translate::make_IC<outp_room, inp_in2>("ROOM","NODE1"),
 
-        dynamic::translate::make_IC<outp_out, Room_Model_Ports::room_model_in>("NODE2","room_model"),
-        dynamic::translate::make_IC<Room_Model_Ports::room_model_out, inp_in2>("room_model","NODE2"),
+        dynamic::translate::make_IC<outp_out, inp_mov>("NODE2","ROOM"),
+        dynamic::translate::make_IC<outp_room, inp_in2>("ROOM","NODE2"),
 
-        dynamic::translate::make_IC<outp_out, Room_Model_Ports::room_model_in>("NODE3","room_model"),
-        dynamic::translate::make_IC<Room_Model_Ports::room_model_out, inp_in2>("room_model","NODE3"),
+        dynamic::translate::make_IC<outp_out, inp_mov>("NODE3","ROOM"),
+        dynamic::translate::make_IC<outp_room, inp_in2>("ROOM","NODE3"),
 
-        dynamic::translate::make_IC<outp_out, Room_Model_Ports::room_model_in>("NODE4","room_model"),
-        dynamic::translate::make_IC<Room_Model_Ports::room_model_out, inp_in2>("room_model","NODE4"),
+        dynamic::translate::make_IC<outp_out, inp_mov>("NODE4","ROOM"),
+        dynamic::translate::make_IC<outp_room, inp_in2>("ROOM","NODE4"),
 
-        dynamic::translate::make_IC<outp_out, Room_Model_Ports::room_model_in>("NODE5","room_model"),
-        dynamic::translate::make_IC<Room_Model_Ports::room_model_out, inp_in2>("room_model","NODE5")
+        dynamic::translate::make_IC<outp_out, inp_mov>("NODE5","ROOM"),
+        dynamic::translate::make_IC<outp_room, inp_in2>("ROOM","NODE5")
      };
      shared_ptr<cadmium::dynamic::modeling::coupled<TIME>> SIM;
     SIM = make_shared<dynamic::modeling::coupled<TIME>>(
@@ -289,7 +325,7 @@ int main(){
 
     //Runner call
     dynamic::engine::runner<NDTime, logger_top> r(TOP, {0});
-    r.run_until(NDTime("20:00:00:000")); //issue?
+    r.run_until(NDTime("20:00:00:000")); 
     return 0;
 
 }
