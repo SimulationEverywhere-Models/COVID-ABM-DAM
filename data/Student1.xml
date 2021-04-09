@@ -1,21 +1,21 @@
-﻿<?xml version="1.0" ?>
+<?xml version="1.0" ?>
 <DecisionMakerBehaviour>
-<ID>0001</ID>
+<ID>1</ID>
 <Location>4th_Mackenzie</Location>
 <IsSick>False</IsSick>
-<ProbabilityOfSafeDistance>Low</ProbabilityOfSafeDistance>
-<ProbabilityOfWearingMask>Low</ProbabilityOfWearingMask>
+<Distance>2</Distance>
+<WearingMask>True</WearingMask>
 <Relationship>
-        <Relationship id = "0002" 
+        <Relationship id = "2" 
                 type = "Classmate"/>
 
-        <Relationship id = "0003"  
+        <Relationship id = "3"  
                 type = "Friend"/>
 
-        <Relationship id = "0004"  
+        <Relationship id = "4"  
                 type = "Classmate"/>
 
-        <Relationship id = "0005"  
+        <Relationship id = "5"  
                 type = "Family"/>
 
 </Relationship>
@@ -34,8 +34,8 @@
                 chance="High"/>
 
         <PersonRelations status="Classmate"
-                probability="Average"
-                chance="Average"/>
+                probability="High"
+                chance="High"/>
 
 </BehaviourRulesPerson>
 
@@ -46,7 +46,7 @@
                 chance="High"/>
 
                 <NumberOfPeople group="small"
-                probability="average"
+                probability="Low"
                 chance="High"/>
  
         </RoomSize>
@@ -61,7 +61,6 @@
 
         </RoomSize>
 </BehaviourRulesRoom>
-
 
 <LocationPlan>
         <LocationPlan room = "1st_Mackenzie" 
