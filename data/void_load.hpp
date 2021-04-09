@@ -1,4 +1,3 @@
-  
 #ifndef void_load_HPP
 #define void_load_HPP
 
@@ -107,8 +106,8 @@ namespace decision_maker_behaviour_structures{
     long                            iD;
     string                          location;
     bool                            isSick;
-    string                          probabilityOfSafeDistance;
-    string                          probabilityOfWearingMask;
+    long                            distance;
+    bool                            wearingMask;
     vector<Relationship>            relationship;
     vector<BehaviourRulesPerson>    behaviourRulesPerson;
     vector<BehaviourRulesRoom>      behaviourRulesRoom;
@@ -158,23 +157,23 @@ void save(const char* pFilename){
 
         //block: SafeDistanceProbability
 
-        {    
+        // {    
 
-          TiXmlElement * pSafeDistanceProbability = new TiXmlElement( "ProbabilityOfSafeDistance" );          
-          pSafeDistanceProbability->LinkEndChild(new TiXmlText(probabilityOfSafeDistance.c_str()));
-          root->LinkEndChild( pSafeDistanceProbability ); 
+        //   TiXmlElement * pSafeDistanceProbability = new TiXmlElement( "ProbabilityOfSafeDistance" );          
+        //   pSafeDistanceProbability->LinkEndChild(new TiXmlText(probabilityOfSafeDistance.c_str()));
+        //   root->LinkEndChild( pSafeDistanceProbability ); 
 
-        } 
+        // } 
 
-        // block: MaskProbability
+        // // block: MaskProbability
 
-        {    
+        // {    
 
-          TiXmlElement * pMaskProbability = new TiXmlElement( "ProbabilityOfWearingMask" );          
-          pMaskProbability->LinkEndChild(new TiXmlText(probabilityOfWearingMask.c_str()));
-          root->LinkEndChild( pMaskProbability ); 
+        //   TiXmlElement * pMaskProbability = new TiXmlElement( "ProbabilityOfWearingMask" );          
+        //   pMaskProbability->LinkEndChild(new TiXmlText(probabilityOfWearingMask.c_str()));
+        //   root->LinkEndChild( pMaskProbability ); 
 
-        }     
+        // }     
 
         //Block: Relationship  ISSUE WITH SAVE
         {
@@ -300,23 +299,28 @@ void save(const char* pFilename){
           }else{
             isSick = true;
           }
-         cout<< isSick <<endl;
+         //cout<< isSick <<endl;
         }
 
-        // block: SafeDistanceProbability
+        // block: Distance
         { 
-          pElem=hRoot.FirstChild("ProbabilityOfSafeDistance").Element();
+          pElem=hRoot.FirstChild("Distance").Element();
           if (!pElem) return;
-          const char* pSafeDistanceProbability = pElem->GetText();
-          if(pSafeDistanceProbability) probabilityOfSafeDistance = pSafeDistanceProbability;
+          const char* pDistance = pElem->GetText();
+          distance =strtol(pDistance,NULL,10);
         }
-				// block: MaskProbability
+				// block: MaskWearing
         { 
-          pElem=hRoot.FirstChild("ProbabilityOfWearingMask").Element();
+          pElem=hRoot.FirstChild("WearingMask").Element();
           if (!pElem) return;
-          const char* pMaskProbability = pElem->GetText();
-          if(pMaskProbability) probabilityOfWearingMask = pMaskProbability;
+          const char* pWearingMask = pElem->GetText();
+          if(strncmp(pWearingMask,"False",2)==0){
+            wearingMask = false;
+          }else{
+            wearingMask = true;
+          }
         }
+
 
         //Block: Relationship
         {
@@ -385,7 +389,7 @@ void save(const char* pFilename){
         //Block: LocationPlan
         {
           locationPlan.clear(); // trash existing list    
-          TiXmlElement* pLocationPlanNode = hRoot.FirstChild( "LocationPlan" ).FirstChild().Element();
+          TiXmlElement* pLocationPlanNode = hRoot.FirstChild("LocationPlan").FirstChild().Element();
           for( pLocationPlanNode; pLocationPlanNode; pLocationPlanNode=pLocationPlanNode->NextSiblingElement())
           {
             LocationPlan c;
