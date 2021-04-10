@@ -34,11 +34,14 @@ with open("/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-A
     f.write("//Messages structures\n")
     f.write("#include \"data/message.hpp\"\n\n")
 
+    # //Atomic model headers
     f.write("//Atomic model headers\n")
     f.write("#include <cadmium/basic_model/pdevs/iestream.hpp> //Atomic model for inputs\n")
     f.write("#include \"atomics/Health_Status_Filter.hpp\"\n")
     f.write("#include \"atomics/Room_Specs_Filter.hpp\"\n")
     f.write("#include \"atomics/BehaviourRules.hpp\"\n")
+    f.write("#include \"atomics/room_entering.hpp\"\n")
+    f.write("#include \"atomics/room_leaving.hpp\"\n")
     f.write("#include \"atomics/room.hpp\"\n")
 
     # size_of1st_print = 28
@@ -72,11 +75,13 @@ with open("/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-A
     f.write("struct inp_in1 : public cadmium::in_port<health_status>{}; //change variable names\n")
     f.write("struct inp_in2 : public cadmium::in_port<room_specs>{};\n")
     f.write("struct inp_SIM : public cadmium::in_port<health_status>{};\n")
+    f.write("struct inp_mov : public cadmium::in_port<person_node>{};\n")
     f.write("// add another input for the generator\n")
 
     # /******* Define output ports for coupled model ********/
     f.write("\n/***** Define output ports for coupled model *****/\n")
     f.write("struct outp_out : public cadmium::out_port<person_node>{};\n")
+    f.write("struct outp_room : public cadmium::out_port<room_specs>{};\n")
 
     # /******** Input Reader atomic model declaration **********/
     f.write("\n\n/****** Input Reader atomic model declaration *******************/\n")
@@ -90,6 +95,8 @@ with open("/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-A
     # *************** int main ******************
 
     f.write("\nint main(){\n\n")
+
+    f.write("\tstring room_ID = \"4th_Mackenzie\";\n\n")
 
     for i in range(1, int(node) + 1):
         f.write("\tDecisionMakerBehaviour person" + str(i) + ";\n")
@@ -127,6 +134,12 @@ with open("/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-A
     # Thou can change the room's location if desired
     f.write("\tshared_ptr<dynamic::modeling::model> room_model = dynamic::translate::make_dynamic_atomic_model<Room_Model, TIME, string, long>(\"room_model\", \"4th_Mackenzie\", 100);\n")
 
+    f.write("\n\t/****** Room Entering Filter ***************/\n")
+    f.write("\tshared_ptr<dynamic::modeling::model> room_entering1 = dynamic::translate::make_dynamic_atomic_model<room_entering, TIME, string>(\"room_entering\", \"4th_Mackenzie\");\n")
+
+    f.write("\n\t/****** Room Leaving Filter ***************/\n")
+    f.write("\tshared_ptr<dynamic::modeling::model> room_leaving1 = dynamic::translate::make_dynamic_atomic_model<room_leaving, TIME, string> (\"room_leaving\", \"4th_Mackenzie\");\n\n")
+
     # Big /*************NODE COUPLED MODEL************/ loops below
     for i in range(1, int(node) + 1):
         f.write("\n\t/*********** NODE " + str(i) + " COUPLED MODEL *************/\n")
@@ -152,11 +165,32 @@ with open("/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-A
         f.write("\t\t\"NODE" + str(i) + "\", submodels_node" + str(i) + ", iports_node" + str(i) + ", oports_node" + str(i) + ", eics_node" + str(i) + ", eocs_node" + str(i) + ", ics_node" + str(i) + "\n")
         f.write("\t);\n")
 
+    # /************ ROOM FILTER MODEL *****************/
+    f.write("\n/************ ROOM FILTER MODEL *****************/\n")
+    f.write("\tdynamic::modeling::Ports iports_ROOM = {typeid(inp_mov)};\n")
+    f.write("\tdynamic::modeling::Ports oports_ROOM = {typeid(outp_room)};\n")
+    f.write("\tdynamic::modeling::Models submodels_ROOM = {room_model, room_entering1, room_leaving1};\n")
+    f.write("\tdynamic::modeling::EICs eics_ROOM = {\n")
+    f.write("\t\tdynamic::translate::make_EIC<inp_mov, room_leaving_ports::room_leaving_in>(\"room_leaving\"),\n")
+    f.write("\t\tdynamic::translate::make_EIC<inp_mov, room_entering_ports::room_entering_in>(\"room_entering\")\n")
+    f.write("\t};\n")
+    f.write("\tdynamic::modeling::EOCs eocs_ROOM = {\n")
+    f.write("\t\tdynamic::translate::make_EOC<Room_Model_Ports::room_model_out, outp_room>(\"room_model\")\n")
+    f.write("\t};\n")
+    f.write("\tdynamic::modeling::ICs ics_ROOM = {\n")
+    f.write("\t\tdynamic::translate::make_IC<room_leaving_ports::room_leaving_out, Room_Model_Ports::room_model_in_leaving>(\"room_leaving\", \"room_model\"),\n")
+    f.write("\t\tdynamic::translate::make_IC<room_entering_ports::room_entering_out, Room_Model_Ports::room_model_in_entering>(\"room_entering\",\"room_model\")\n")
+    f.write("\t};\n")
+    f.write("\tshared_ptr<dynamic::modeling::coupled<TIME>> ROOM;\n")
+    f.write("\tROOM = make_shared<dynamic::modeling::coupled<TIME>>(\n")
+    f.write("\t\t\"ROOM\", submodels_ROOM, iports_ROOM, oports_ROOM, eics_ROOM, eocs_ROOM, ics_ROOM\n")
+    f.write("\t);\n\n")
+
     # /******** SIMULATOR MODEL *********/
     f.write("\t\n/********* SIMULATOR MODEL *********/\n")
     f.write("\tdynamic::modeling::Ports iports_SIM = {typeid(inp_SIM)}; // sim input\n")
     f.write("\tdynamic::modeling::Ports oports_SIM = {typeid(outp_out)};\n")
-    f.write("\tdynamic::modeling::Models submodels_SIM = {room_model")
+    f.write("\tdynamic::modeling::Models submodels_SIM = {ROOM")
     for i in range(1, int(node) + 1):
         f.write(", NODE" + str(i))
     f.write("};\n")
@@ -169,25 +203,26 @@ with open("/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-A
             f.write("\t\tdynamic::translate::make_EIC<inp_SIM, inp_in1>(\"NODE" + str(i) + "\"),\n")
         count = count + 1
 
+    # // input generator coupling
     f.write("\n\t}; // input generator coupling\n")
     f.write("\tdynamic::modeling::EOCs eocs_SIM = {\n")
     count = 1
     for i in range(1, int(node) + 1):
         if count == int(node):
-            f.write("\tdynamic::translate::make_EOC<outp_out,outp_out>(\"NODE" + str(i) + "\")\n")
+            f.write("\t\tdynamic::translate::make_EOC<outp_out,outp_out>(\"NODE" + str(i) + "\")\n")
         else:
-            f.write("\tdynamic::translate::make_EOC<outp_out,outp_out>(\"NODE" + str(i) + "\"),\n")
+            f.write("\t\tdynamic::translate::make_EOC<outp_out,outp_out>(\"NODE" + str(i) + "\"),\n")
         count = count + 1
     f.write("\t};\n")
 
     f.write("\tdynamic::modeling::ICs ics_SIM = {\n")
     count = 1
     for i in range(1, int(node) + 1):
-        f.write("\tdynamic::translate::make_IC<outp_out, Room_Model_Ports::room_model_in>(\"NODE" + str(i) + "\",\"room_model\"),\n")
+        f.write("\t\tdynamic::translate::make_IC<outp_out, inp_mov>(\"NODE" + str(i) + "\",\"ROOM\"),\n")
         if count == int(node):
-            f.write("\tdynamic::translate::make_IC<Room_Model_Ports::room_model_out, inp_in2>(\"room_model\",\"NODE" + str(i) + "\")\n")
+            f.write("\t\tdynamic::translate::make_IC<outp_room, inp_in2>(\"ROOM\",\"NODE" + str(i) + "\")\n")
         else:
-            f.write("\tdynamic::translate::make_IC<Room_Model_Ports::room_model_out, inp_in2>(\"room_model\",\"NODE" + str(i) + "\"),\n\n")
+            f.write("\t\tdynamic::translate::make_IC<outp_room, inp_in2>(\"ROOM\",\"NODE" + str(i) + "\"),\n\n")
         count = count + 1
     f.write("\t};\n")
 
@@ -242,7 +277,7 @@ with open("/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-A
     f.write("\n\t//Runner call\n")
     f.write("\tdynamic::engine::runner<NDTime, logger_top> r(TOP, {0});\n")
     # Thou can change the TIME here again
-    f.write("\tr.run_until(NDTime(\"20:00:00:000\")); //issue?\n")
+    f.write("\tr.run_until(NDTime(\"20:00:00:000\"));\n")
     f.write("\treturn 0;\n")
 
     f.write("\t\n}")

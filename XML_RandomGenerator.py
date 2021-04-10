@@ -27,7 +27,9 @@ for student in range(1, int(number_of_students)+1):
         f.write("<ID>" + str(student) + "</ID>\n")
         f.write("<Location>4th_Mackenzie</Location>\n")
         f.write("<IsSick>" + random.choice(sick) + "</IsSick>\n")
-        f.write("<ProbabilityOfWearingMask>" + random.choice(probabilities) + "</ProbabilityOfWearingMask>\n")
+        f.write("<Distance>" + str(random.randint(1, 10)) + "</Distance>\n")
+        f.write("<WearingMaks>" + random.choice(sick) + "</WearingMask>\n")
+        # f.write("<ProbabilityOfWearingMask>" + random.choice(probabilities) + "</ProbabilityOfWearingMask>\n")
         f.write("<Relationship>\n")
 
         for student_id in range(1, int(number_of_students)+1):
@@ -57,22 +59,22 @@ for student in range(1, int(number_of_students)+1):
         f.write("</BehaviourRulesPerson>\n\n")
         f.write("<BehaviourRulesRoom>\n")
 
-        f.write("\t<RoomSize size=\"Small\">\n")
-        f.write("\t\t<NumberOfPeople group=\"Large\"\n")
+        f.write("\t<RoomSize size=\"small\">\n")
+        f.write("\t\t<NumberOfPeople group=\"large\"\n")
         f.write("\t\tprobability=\"" + random.choice(probabilities) + "\"\n")
         f.write("\t\tchance=\"" + random.choice(probabilities) + "\"/>\n\n")
 
-        f.write("\t\t<NumberOfPeople group=\"Small\"\n")
+        f.write("\t\t<NumberOfPeople group=\"small\"\n")
         f.write("\t\tprobability=\"" + random.choice(probabilities) + "\"\n")
         f.write("\t\tchance=\"" + random.choice(probabilities) + "\"/>\n\n")
         f.write("\t</RoomSize>\n")
 
-        f.write("\t<RoomSize size=\"Large\">\n")
-        f.write("\t\t<NumberOfPeople group=\"Large\"\n")
+        f.write("\t<RoomSize size=\"large\">\n")
+        f.write("\t\t<NumberOfPeople group=\"large\"\n")
         f.write("\t\tprobability=\"" + random.choice(probabilities) + "\"\n")
         f.write("\t\tchance=\"" + random.choice(probabilities) + "\"/>\n\n")
 
-        f.write("\t\t<NumberOfPeople group=\"Small\"\n")
+        f.write("\t\t<NumberOfPeople group=\"small\"\n")
         f.write("\t\tprobability=\"" + random.choice(probabilities) + "\"\n")
         f.write("\t\tchance=\"" + random.choice(probabilities) + "\"/>\n\n")
         f.write("\t</RoomSize>\n")
