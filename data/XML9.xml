@@ -1,0 +1,153 @@
+<?xml version="1.0" ?>
+<DecisionMakerBehaviour>
+<ID>9</ID>
+<Location>4th_Mackenzie</Location>
+<IsSick>True</IsSick>
+<Distance>7</Distance>
+<WearingMask>True</WearingMask>
+<Relationship>
+	<Relationship id = "1"
+		type = "Professor"/>
+
+	<Relationship id = "2"
+		type = "Professor"/>
+
+	<Relationship id = "3"
+		type = "Friend"/>
+
+	<Relationship id = "4"
+		type = "Friend"/>
+
+	<Relationship id = "5"
+		type = "Family"/>
+
+	<Relationship id = "6"
+		type = "Classmate"/>
+
+	<Relationship id = "7"
+		type = "Family"/>
+
+	<Relationship id = "8"
+		type = "Professor"/>
+
+	<Relationship id = "10"
+		type = "Friend"/>
+
+	<Relationship id = "11"
+		type = "Classmate"/>
+
+	<Relationship id = "12"
+		type = "Classmate"/>
+
+	<Relationship id = "13"
+		type = "Classmate"/>
+
+	<Relationship id = "14"
+		type = "Friend"/>
+
+	<Relationship id = "15"
+		type = "Classmate"/>
+
+	<Relationship id = "16"
+		type = "Professor"/>
+
+	<Relationship id = "17"
+		type = "Friend"/>
+
+	<Relationship id = "18"
+		type = "Professor"/>
+
+	<Relationship id = "19"
+		type = "Friend"/>
+
+	<Relationship id = "20"
+		type = "Friend"/>
+
+	<Relationship id = "21"
+		type = "Professor"/>
+
+	<Relationship id = "22"
+		type = "Family"/>
+
+	<Relationship id = "23"
+		type = "Professor"/>
+
+	<Relationship id = "24"
+		type = "Classmate"/>
+
+	<Relationship id = "25"
+		type = "Friend"/>
+
+	<Relationship id = "26"
+		type = "Friend"/>
+
+	<Relationship id = "27"
+		type = "Classmate"/>
+
+	<Relationship id = "28"
+		type = "Professor"/>
+
+	<Relationship id = "29"
+		type = "Professor"/>
+
+	<Relationship id = "30"
+		type = "Professor"/>
+
+</Relationship>
+
+<BehaviourRulesPerson>
+	<PersonRelations status="Family"
+		probability="Low"
+		chance="High"/>
+
+	<PersonRelations status="Friend"
+		probability="High"
+		chance="High"/>
+
+	<PersonRelations status= "Professor"
+		probability="Low"
+		chance="Low"/>
+
+	<PersonRelations status= "Classmate"
+		probability="Low"
+		chance="Low"/>
+
+</BehaviourRulesPerson>
+
+<BehaviourRulesRoom>
+	<RoomSize size="small">
+		<NumberOfPeople group="large"
+		probability="Low"
+		chance="Low"/>
+
+		<NumberOfPeople group="small"
+		probability="Low"
+		chance="High"/>
+
+	</RoomSize>
+	<RoomSize size="large">
+		<NumberOfPeople group="large"
+		probability="High"
+		chance="High"/>
+
+		<NumberOfPeople group="small"
+		probability="Low"
+		chance="High"/>
+
+	</RoomSize>
+</BehaviourRulesRoom>
+<LocationPlan>
+	<LocationPlan room = "4th_Mackenzie"
+		timeinroom = "120"/>
+
+	<LocationPlan room = "1st_Mackenzie"
+		timeinroom = "30"/>
+
+	<LocationPlan room = "3rd_Mackenzie"
+		timeinroom = "30"/>
+
+	<LocationPlan room = "4th_Mackenzie"
+		timeinroom = "60"/>
+
+</LocationPlan>
+</DecisionMakerBehaviour>
