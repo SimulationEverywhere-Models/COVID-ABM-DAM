@@ -12,7 +12,7 @@ for student in range(1, int(number_of_students)+1):
     probabilities = ["Low", "High"]
     sick = ["True", "False"]
     room = ["1st_Mackenzie", "2nd_Mackenzie", "3rd_Mackenzie", "4th_Mackenzie"]
-    time_in_room = ["00:30:00:00", "00:60:00:00", "01:30:00:000", "02:00:00:000", "03:00:00:000"]
+    time_in_room = ["00:30:00:00", "01:00:00:00", "01:30:00:000", "02:00:00:000", "03:00:00:000"]
     # size = ["Large", "Small"]
     # file_path = "/home/paul/Desktop/XML" + str(student) + ".xml"
 
