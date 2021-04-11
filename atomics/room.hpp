@@ -272,7 +272,7 @@ template<typename TIME> class Room_Model{
        // }
         
         for (int j=0; j<(i.Exposed_To_Virus).size(); j++){
-            os <<" Person ID: "<< i.Exposed_To_Virus[j].Person_ID_room  <<  " Room Size: " <<i.Exposed_To_Virus[j].room_size
+            os <<" Person's Identification: "<< i.Exposed_To_Virus[j].Person_ID_room  <<  " Room Size: " <<i.Exposed_To_Virus[j].room_size
             << " Viral Particles: " << i.Exposed_To_Virus[j].viral_particles << " Room ID: " << i.Exposed_To_Virus[j].room_ID_room << "\n ";
 
         }
