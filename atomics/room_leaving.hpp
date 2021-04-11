@@ -95,7 +95,7 @@ template <typename TIME> class room_leaving{
 
     friend std::ostringstream& operator<<(std::ostringstream& os, const typename room_leaving<TIME>::state_type& i) {
         for (int j = 0; j < (i.msgs_passing_filter).size(); j++){
-            os << "For person: " << i.msgs_passing_filter[j].Person_ID << " Room entering: " << i.msgs_passing_filter[j].Room_ID_Entering << " Room leaving: " << i.msgs_passing_filter[j].Room_ID_Leaving << " Is sick: " << i.msgs_passing_filter[j].IsSick << " Mask wearing: " << i.msgs_passing_filter[j].mask_wearing << " Room ID: " << i.msgs_passing_filter[j].room_ID_person << " Distance from people: " << i.msgs_passing_filter[j].distance_from_people << "\n"; 
+            os << "For person: " << i.msgs_passing_filter[j].Person_ID << " Room entering: " << i.msgs_passing_filter[j].Room_ID_Entering << " Room leaving: " << i.msgs_passing_filter[j].Room_ID_Leaving << " Is sick: " << i.msgs_passing_filter[j].IsSick << " Mask?: " << i.msgs_passing_filter[j].mask_wearing << " Room ID: " << i.msgs_passing_filter[j].room_ID_person << " Distance from other nodes: " << i.msgs_passing_filter[j].distance_from_people << "\n"; 
         
         }
         return os;
