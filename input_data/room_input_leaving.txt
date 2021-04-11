@@ -1,0 +1,6 @@
+00:30:00:00 1 home 4th_Mackenzie 1 0 4th_Mackenzie 2
+01:00:00:00 2 home 4th_Mackenzie 0 1 4th_Mackenzie 3
+02:00:00:00 3 home 4th_Mackenzie 0 0 4th_Mackenzie 1
+03:00:00:00 4 home 4th_Mackenzie 1 1 4th_Mackenzie 4
+04:00:00:00 5 home 4th_Mackenzie 0 1 4th_Mackenzie 2
+05:00:00:00 1 4th_Mackenzie home 1 0 4th_Mackenzie 2
