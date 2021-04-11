@@ -28,7 +28,7 @@ for student in range(1, int(number_of_students)+1):
         f.write("<Location>4th_Mackenzie</Location>\n")
         f.write("<IsSick>" + random.choice(sick) + "</IsSick>\n")
         f.write("<Distance>" + str(random.randint(1, 10)) + "</Distance>\n")
-        f.write("<WearingMaks>" + random.choice(sick) + "</WearingMask>\n")
+        f.write("<WearingMasks>" + random.choice(sick) + "</WearingMask>\n")
         # f.write("<ProbabilityOfWearingMask>" + random.choice(probabilities) + "</ProbabilityOfWearingMask>\n")
         f.write("<Relationship>\n")
 
