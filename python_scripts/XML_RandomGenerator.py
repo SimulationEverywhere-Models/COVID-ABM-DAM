@@ -17,6 +17,7 @@ for student in range(1, int(number_of_students)+1):
     # file_path = "/home/paul/Desktop/XML" + str(student) + ".xml"
 
 # The random.randint(1, 9) caps the distance to 9 metres.
+    # Change thy directory if required.
     with open("/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-ABM-DAM-Main_Coupled_Model/data/XML" + str(student) + ".xml", 'w') as f:
         f.write("<?xml version=\"1.0\" ?>\n")
         f.write("<DecisionMakerBehaviour>\n")
