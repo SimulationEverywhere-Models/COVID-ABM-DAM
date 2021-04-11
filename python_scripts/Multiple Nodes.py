@@ -2,7 +2,7 @@
 
 node = input("Enter the number of nodes: ")
 
-with open("/Volumes/[C] Windows 10.hidden/Cadmium-Simulation-Environment/DEVS-Models/Node_Coupled_Model/main_node.cpp", 'w') as f:
+with open("/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-ABM-DAM-Main_Coupled_Model/main_node.cpp", 'w') as f:
 #with open("/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-ABM-DAM-Main_Coupled_Model/main_node.cpp",'r') as read_file:
     # size_of_print = 10
     # for line in range(size_of_print):

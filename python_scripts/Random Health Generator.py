@@ -10,7 +10,7 @@ Make sure to change thy directory to match thy computer.
 import random
 
 # Change directory if needed
-with open("/Volumes/[C] Windows 10.hidden/Cadmium-Simulation-Environment/DEVS-Models/Node_Coupled_Model/input_data/health_generator.txt", "w") as f:
+with open("/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-ABM-DAM-Main_Coupled_Model/input_data/health_generator.txt", "w") as f:
 
     nodes = input("Enter the number of nodes: ")
     while not(int(nodes) > 0):

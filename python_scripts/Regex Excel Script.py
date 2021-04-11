@@ -1,8 +1,15 @@
 # imports
 import re
 
-nodes = input("Enter the number of nodes: ")
-with open('/Volumes/[C] Windows 10.hidden/Cadmium-Simulation-Environment/DEVS-Models/Node_Coupled_Model/simulation_results/main_node_test_output_state.txt', "r") as f:
+# **** IMPORTANT NOTICE: Thou can change the ceiling node limit to a different number.
+# Make sure to change the person_id_matches loop to accommodate the changes!
+nodes = input("Enter the number of nodes (must be less than 100): ")
+while int(nodes) >= 100 or int(nodes) <= 0:
+    print("Error, enter a valid number of nodes between 1 and 99")
+    nodes = input("Enter the number of nodes (must be less than 100): ")
+
+# Change thy directory if required
+with open('/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-ABM-DAM-Main_Coupled_Model/simulation_results/main_node_test_output_state.txt', "r") as f:
     file = f.read()
     # new_file = open("/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-ABM-DAM-Main_Coupled_Model/simulation_results/TemporaryFile.txt", "w")
     # with open('/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-ABM-DAM-Main_Coupled_Model/simulation_results/TemporaryFile.txt', "w+") as temp:
@@ -10,7 +17,7 @@ with open('/Volumes/[C] Windows 10.hidden/Cadmium-Simulation-Environment/DEVS-Mo
         # for line in file:
         #     new_file.write(line)
         # new_file.close()
-    with open('/Volumes/[C] Windows 10.hidden/Cadmium-Simulation-Environment/DEVS-Models/Node_Coupled_Model/Regex.tsv', 'w') as regex:
+    with open('/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-ABM-DAM-Main_Coupled_Model/Regex.tsv', 'w') as regex:
 
         regex.write("Time\tPerson ID\tSick\tMask Wearing\tDistance\n")
         # file = f.replace("State for model input_reader_health is next time: \d\d:\d\d:\d\d:\d\d\d", "#")
@@ -64,8 +71,12 @@ with open('/Volumes/[C] Windows 10.hidden/Cadmium-Simulation-Environment/DEVS-Mo
 
         for match in person_id_matches:
             index = list(match.span())
-            print(file[index[1]:index[1]+1])
-            regex.write("\t" + file[index[1]:index[1]+1] + "\n")
+            if 10 <= int(nodes) < 100:
+                position = 2
+            else:
+                position = 1
+            print(file[index[1]:index[1]+position])
+            regex.write("\t" + file[index[1]:index[1]+position] + "\n")
 
         # regex.seek(f.start())
 

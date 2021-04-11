@@ -1,10 +1,5 @@
 # imports
 import random
-import xml.etree.ElementTree as Student_XML
-from xml.etree.ElementTree import ElementTree
-from xml.etree.ElementTree import Element
-import os
-import re
 
 number_of_students = input("\nEnter the number of students in the room: ")
 
@@ -21,14 +16,15 @@ for student in range(1, int(number_of_students)+1):
     # size = ["Large", "Small"]
     # file_path = "/home/paul/Desktop/XML" + str(student) + ".xml"
 
-    with open("/Volumes/[C] Windows 10.hidden/Cadmium-Simulation-Environment/DEVS-Models/Node_Coupled_Model/data/XML" + str(student) + ".xml", 'w') as f:
+# The random.randint(1, 9) caps the distance to 9 metres.
+    with open("/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-ABM-DAM-Main_Coupled_Model/data/XML" + str(student) + ".xml", 'w') as f:
         f.write("<?xml version=\"1.0\" ?>\n")
         f.write("<DecisionMakerBehaviour>\n")
         f.write("<ID>" + str(student) + "</ID>\n")
         f.write("<Location>4th_Mackenzie</Location>\n")
         f.write("<IsSick>" + random.choice(sick) + "</IsSick>\n")
-        f.write("<Distance>" + str(random.randint(1, 10)) + "</Distance>\n")
-        f.write("<WearingMask>" + random.choice(sick) + "</WearingMask>\n")
+        f.write("<Distance>" + str(random.randint(1, 9)) + "</Distance>\n")
+        f.write("<WearingMasks>" + random.choice(sick) + "</WearingMask>\n")
         # f.write("<ProbabilityOfWearingMask>" + random.choice(probabilities) + "</ProbabilityOfWearingMask>\n")
         f.write("<Relationship>\n")
 
