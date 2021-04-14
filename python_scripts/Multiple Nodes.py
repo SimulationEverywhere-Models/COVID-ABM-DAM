@@ -1,4 +1,5 @@
 # imports
+import random
 
 node = input("Enter the number of nodes: ")
 
@@ -128,7 +129,11 @@ with open("/home/paul/CADMIUM/Cadmium-Simulation-Environment/DEVS-Models/COVID-A
 
     f.write("\n\t/****** Behaviour Rules atomic model instantiation *****************/\n")
     for i in range(1, int(node) + 1):
-        f.write("\tshared_ptr<dynamic::modeling::model> behaviour_rules" + str(i) + " = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, TIME, string, TIME, TIME>(\"behaviour_rules" + str(i) + "\", \"../data/XML" + str(i) + ".xml\", TIME(\"01:30:00:00\"), TIME(\"01:50:00:00\"));\n")
+        f.write("\tshared_ptr<dynamic::modeling::model> behaviour_rules" + str(i) + " = dynamic::translate::make_dynamic_atomic_model<BehaviourRules, "
+                "TIME, string, TIME, TIME>(\"behaviour_rules" + str(i) + "\", \"../data/XML" + str(i) + ".xml\", "
+                "TIME(\"0" + str(random.randint(0, 5)) + ":" + str(random.randint(4, 5)) + "0:" + str(random.randint(0, 5))
+                + str(random.randint(0, 9)) + ":" + str(random.randint(0, 5)) + str(random.randint(0,5)) + "\"), TIME(\"0" + str(random.randint(0, 5)) + ":" + str(random.randint(4, 5)) + "0:" + str(random.randint(0, 5))
+                + str(random.randint(0, 9)) + ":" + str(random.randint(0, 5)) + str(random.randint(0,5)) + "\"));\n")
 
     f.write("\n\t/****** Room Model atomic model instantiation **************/\n")
     # Thou can change the room's location if desired
