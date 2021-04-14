@@ -169,7 +169,7 @@ template <typename TIME> class BehaviourRules {
                 state.ViralLoad += msg_in[i].viral_particles;
 
             }
-            if(state.ViralLoad > 200 && state.person.isSick == false){
+            if(state.ViralLoad > 1000 && state.person.isSick == false){
                 state.person.isSick = true;
                 state.info.room_id_entering = "4th_Mackenzie";
             }
